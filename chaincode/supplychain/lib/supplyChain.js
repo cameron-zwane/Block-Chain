@@ -75,6 +75,7 @@ class AssetTransfer extends Contract {
         ];
 
         for (const asset of assets) {
+            asset.DocType = 'asset';
             await ctx.stub.putState(asset.ItemID, Buffer.from(JSON.stringify(asset)));
             console.info(`Asset ${asset.ItemID} initialized`);
         }
@@ -161,47 +162,93 @@ class AssetTransfer extends Contract {
         return assetJSON && assetJSON.length > 0;
     }
 
-    // // TransferAsset updates the owner field of asset with given id in the world state.
+    // TransferAsset updates the owner field of asset with given id in the world state.
     async TransferAsset(
         ctx, 
         itemID, 
         newOwner = {Entity, OwnerLocation, ReceivedDate},
-        transferTransaction = {transactionID, details}
+        transferTransaction = {TransactionID, Details}
     ) {
         const assetString = await this.ReadAsset(ctx, itemID);
         const asset = JSON.parse(assetString);
         asset.TransactionHistory.push({
-            TransactionID: transferTransaction.transactionID,
+            TransactionID: transferTransaction.TransactionID,
             Timestamp: (new Date()).toISOString(),
             From: asset.CurrentOwner.Entity,
             To: newOwner.Entity,
-            Details: transferTransaction.details
+            Details: transferTransaction.Details
         });
         asset.CurrentOwner = newOwner;
         return ctx.stub.putState(itemID, Buffer.from(JSON.stringify(asset)));
     }
 
+    // GetAllResults returns all the results from an iterator
+    async GetAllResults(iterator, isHistory) {
+		const allResults = [];
+		let res = await iterator.next();
+		while (!res.done) {
+			if (res.value && res.value.value.toString()) {
+				let jsonRes = {};
+				console.log(res.value.value.toString('utf8'));
+				if (isHistory && isHistory === true) {
+					jsonRes.TxId = res.value.tx_id;
+					jsonRes.Timestamp = res.value.timestamp;
+					try {
+						jsonRes.Value = JSON.parse(res.value.value.toString('utf8'));
+					} catch (err) {
+						console.log(err);
+						jsonRes.Value = res.value.value.toString('utf8');
+					}
+				} else {
+					jsonRes.Key = res.value.key;
+					try {
+						jsonRes.Record = JSON.parse(res.value.value.toString('utf8'));
+					} catch (err) {
+						console.log(err);
+						jsonRes.Record = res.value.value.toString('utf8');
+					}
+				}
+				allResults.push(jsonRes);
+			}
+			res = await iterator.next();
+		}
+		iterator.close();
+		return allResults;
+	}
+
     // GetAllAssets returns all assets found in the world state.
     async GetAllAssets(ctx) {
-        const allResults = [];
-        // range query with empty string for startKey and endKey does an open-ended query of all assets in the chaincode namespace.
         const iterator = await ctx.stub.getStateByRange('', '');
-        let result = await iterator.next();
-        while (!result.done) {
-            const strValue = Buffer.from(result.value.value.toString()).toString('utf8');
-            let record;
-            try {
-                record = JSON.parse(strValue);
-            } catch (err) {
-                console.log(err);
-                record = strValue;
-            }
-            allResults.push({ Key: result.value.key, Record: record });
-            result = await iterator.next();
-        }
+        const allResults = await this.GetAllResults(iterator, false);
+
         return JSON.stringify(allResults);
     }
 
+    // GetAssetHistory returns the chain of custody for an asset since issuance.
+	async GetAssetHistory(ctx, itemID) {
+		const iterator = await ctx.stub.getHistoryForKey(itemID);
+		const results = await this.GetAllResults(iterator, true);
+
+		return JSON.stringify(results);
+	}
+
+    // GetQueryResultForQueryString executes the passed in query string.
+	async GetQueryResultForQueryString(ctx, queryString) {
+
+		const iterator = await ctx.stub.getQueryResult(queryString);
+		const results = await this.GetAllResults(iterator, false);
+
+		return JSON.stringify(results);
+	}
+
+    // GetAssetsByOwner returns all assets owned by a specified owner.
+    async GetAssetsByOwner(ctx, ownerEntity) {
+		let queryString = {};
+		queryString.selector = {};
+		queryString.selector.DocType = 'asset';
+		queryString.selector.CurrentOwner.Entity = ownerEntity;
+		return await this.GetQueryResultForQueryString(ctx, JSON.stringify(queryString)); 
+	}
 
 }
 

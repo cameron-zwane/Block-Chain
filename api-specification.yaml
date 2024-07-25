@@ -169,12 +169,12 @@ paths:
                   exists:
                     type: boolean
 
-  /api/assets/{assetId}/transfer:
+  /api/assets/{AssetId}/transfer:
     post:
       summary: Transfer ownership of an asset
       parameters:
         - in: path
-          name: assetId
+          name: AssetId
           required: true
           schema:
             type: string
@@ -202,12 +202,12 @@ paths:
                 items:
                   $ref: '#/components/schemas/Transfer'
 
-  /api/assets/{assetId}/history:
+  /api/assets/{AssetId}/history:
     get:
       summary: Get the history of a specific asset
       parameters:
         - in: path
-          name: assetId
+          name: AssetId
           required: true
           schema:
             type: string

@@ -9,6 +9,11 @@ import {
   getAllAssetsController,
   getAssetHistoryController,
   getAssetsByOwnerController,
+  PackageAssetController,
+  ProcessAssetController,
+  ShipAssetController,
+  CompleteShipmentController,
+  GetQueryResultForQueryStringController,
 } from '../controllers/assetsController.js';
 
 export const router = express.Router();
@@ -22,3 +27,9 @@ router.post('/assets/:assetId/transfer', transferAssetController);
 router.get('/assets/all', getAllAssetsController);
 router.get('/assets/:assetId/history', getAssetHistoryController);
 router.get('/owners/:OwnerId/assets', getAssetsByOwnerController);
+router;
+router.post('/assets/:AssetId/package', PackageAssetController);
+router.post('/assets/:AssetId/process', ProcessAssetController);
+router.post('/assets/:AssetId/ship', ShipAssetController);
+router.post('/assets/:AssetId/complete', CompleteShipmentController);
+router.get('/query', GetQueryResultForQueryStringController);

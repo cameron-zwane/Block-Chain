@@ -1,12 +1,12 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const assetsRoutes = require('./routes/assetsRoutes');
+import express from 'express';
+import bodyParser from 'body-parser';
+import { router } from './routes/assetsRoutes.js';
 
 const app = express();
 const port = 3000;
 
 app.use(bodyParser.json());
-app.use('/api', assetsRoutes);
+app.use('/api', router);
 
 app.get('/', (req, res) => {
   res.send('Hello World!');

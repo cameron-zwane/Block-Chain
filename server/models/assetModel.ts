@@ -4,51 +4,48 @@ const ccp = {
   name: 'Network',
   version: '1.1',
   channels: {
-    mychannel: {
-      orderers: ['orderer.example.com'],
-      peers: ['peer0.org1.example.com', 'peer0.org2.example.com'],
+    'ws-supplier-channel': {
+      orderers: [
+        'orderer.n-e6kqya3ve5hmdf2bnv4bfcnkga.managedblockchain.eu-west-1.amazonaws.com:30001',
+      ],
+      peers: [
+        'nd-n3kcx2gymnaxxjtey3agpaprw4.m-rf4xjnqfsrhzjcryku3tl3dbe4.n-e6kqya3ve5hmdf2bnv4bfcnkga.managedblockchain.eu-west-1.amazonaws.com',
+      ],
     },
   },
   organizations: {
     Org1: {
-      mspid: 'Org1MSP',
-      peers: ['peer0.org1.example.com'],
-    },
-    Org2: {
-      mspid: 'Org2MSP',
-      peers: ['peer0.org2.example.com'],
+      mspid: 'm-RF4XJNQFSRHZJCRYKU3TL3DBE4',
+      peers: [
+        'nd-n3kcx2gymnaxxjtey3agpaprw4.m-rf4xjnqfsrhzjcryku3tl3dbe4.n-e6kqya3ve5hmdf2bnv4bfcnkga.managedblockchain.eu-west-1.amazonaws.com',
+      ],
     },
   },
   orderers: {
-    'orderer.example.com': {
-      url: 'grpcs://localhost:7050',
-      grpcOptions: {
-        'ssl-target-name-override': 'orderer.example.com',
+    'orderer.n-e6kqya3ve5hmdf2bnv4bfcnkga.managedblockchain.eu-west-1.amazonaws.com':
+      {
+        url: 'grpcs://orderer.n-e6kqya3ve5hmdf2bnv4bfcnkga.managedblockchain.eu-west-1.amazonaws.com:30001',
+        grpcOptions: {
+          'ssl-target-name-override':
+            'orderer.n-e6kqya3ve5hmdf2bnv4bfcnkga.managedblockchain.eu-west-1.amazonaws.com',
+        },
+        tlsCACerts: {
+          path: '/admin-msp/cacerts/ca-m-rf4xjnqfsrhzjcryku3tl3dbe4-n-e6kqya3ve5hmdf2bnv4bfcnkga-managedblockchain-eu-west-1-amazonaws-com-30002.pem',
+        },
       },
-      tlsCACerts: {
-        path: 'test/ordererOrganizations/example.com/orderers/orderer.example.com/tlscacerts/example.com-cert.pem',
-      },
-    },
   },
   peers: {
-    'peer0.org1.example.com': {
-      url: 'grpcs://localhost:7051',
-      grpcOptions: {
-        'ssl-target-name-override': 'peer0.org1.example.com',
+    'nd-n3kcx2gymnaxxjtey3agpaprw4.m-rf4xjnqfsrhzjcryku3tl3dbe4.n-e6kqya3ve5hmdf2bnv4bfcnkga.managedblockchain.eu-west-1.amazonaws.com':
+      {
+        url: 'grpcs://nd-n3kcx2gymnaxxjtey3agpaprw4.m-rf4xjnqfsrhzjcryku3tl3dbe4.n-e6kqya3ve5hmdf2bnv4bfcnkga.managedblockchain.eu-west-1.amazonaws.com:30003',
+        grpcOptions: {
+          'ssl-target-name-override':
+            'nd-n3kcx2gymnaxxjtey3agpaprw4.m-rf4xjnqfsrhzjcryku3tl3dbe4.n-e6kqya3ve5hmdf2bnv4bfcnkga.managedblockchain.eu-west-1.amazonaws.com',
+        },
+        tlsCACerts: {
+          path: '/admin-msp/cacerts/ca-m-rf4xjnqfsrhzjcryku3tl3dbe4-n-e6kqya3ve5hmdf2bnv4bfcnkga-managedblockchain-eu-west-1-amazonaws-com-30002.pem',
+        },
       },
-      tlsCACerts: {
-        path: 'test/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tlscacerts/org1.example.com-cert.pem',
-      },
-    },
-    'peer0.org2.example.com': {
-      url: 'grpcs://localhost:8051',
-      grpcOptions: {
-        'ssl-target-name-override': 'peer0.org2.example.com',
-      },
-      tlsCACerts: {
-        path: 'test/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tlscacerts/org2.example.com-cert.pem',
-      },
-    },
   },
 };
 
@@ -166,7 +163,7 @@ export const getAssetHistory = async (id) => {
   return JSON.parse(result.toString());
 };
 
-export const getAssetById = async (startId, endId) => {
+export const getAssetById = async (Id) => {
   const gateway = new Gateway();
   const wallet = await Wallets.newInMemoryWallet();
   await gateway.connect(ccp, {
@@ -178,11 +175,7 @@ export const getAssetById = async (startId, endId) => {
   const network = await gateway.getNetwork('Network');
   const contract = network.getContract('asset');
 
-  const result = await contract.evaluateTransaction(
-    'GetAssetByRange',
-    startId,
-    endId
-  );
+  const result = await contract.evaluateTransaction('GetAssetByRange', Id);
   await gateway.disconnect();
   return JSON.parse(result.toString());
 };
@@ -198,7 +191,7 @@ export const assetExists = async (id) => {
 
   const network = await gateway.getNetwork('Network');
   const contract = network.getContract('asset');
-
+  console.log('id', id);
   const result = await contract.evaluateTransaction('AssetExists', id);
   await gateway.disconnect();
   return JSON.parse(result.toString());

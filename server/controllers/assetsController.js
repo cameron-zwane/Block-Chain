@@ -110,3 +110,53 @@ export const getAssetsByOwnerController = (req, res) => {
     res.status(400).json({ error: error.message });
   }
 };
+
+export const ReadAssetController = (req, res) => {
+  const asset = ReadAsset(req.params.AssetId);
+  if (asset) {
+    res.json(asset);
+  } else {
+    res.status(404).send('Asset not found');
+  }
+};
+
+export const ProcessAssetController = (req, res) => {
+  const asset = ProcessAsset(req.params.AssetId);
+  if (asset) {
+    res.json(asset);
+  } else {
+    res.status(404).send('Asset not found');
+  }
+};
+
+export const PackageAssetController = (req, res) => {
+  const asset = PackageAsset(req.params.AssetId);
+  if (asset) {
+    res.json(asset);
+  } else {
+    res.status(404).send('Asset not found');
+  }
+};
+
+export const ShipAssetController = (req, res) => {
+  const asset = ShipAsset(req.params.AssetId);
+  if (asset) {
+    res.json(asset);
+  } else {
+    res.status(404).send('Asset not found');
+  }
+};
+
+export const CompleteShipmentController = (req, res) => {
+  const asset = CompleteShipment(req.params.AssetId);
+  if (asset) {
+    res.json(asset);
+  } else {
+    res.status(404).send('Asset not found');
+  }
+};
+
+export const GetQueryResultForQueryStringController = (req, res) => {
+  const assets = GetQueryResultForQueryString(req.params.AssetId);
+  res.json(assets);
+};

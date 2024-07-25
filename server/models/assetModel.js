@@ -456,7 +456,7 @@ export const readAsset = async (id) => {
   return JSON.parse(result.toString());
 };
 
-// ? @Lucinda Done
+//! TODO: @Lucinda
 export const GetQueryResultForQueryString = async (id) => {
   const gateway = new Gateway();
   const wallet = await Wallets.newInMemoryWallet();
@@ -485,6 +485,118 @@ export const GetQueryResultForQueryString = async (id) => {
   );
   await gateway.disconnect();
   return JSON.parse(result.toString());
+};
+
+//! TODO: @Lucinda
+export const ProcessAsset = async (asset) => {
+  const gateway = new Gateway();
+  const wallet = await Wallets.newInMemoryWallet();
+  const identity = {
+    credentials: {
+      certificate: certContent,
+      privateKey: privateKey,
+    },
+    mspId: cpp.organizations.Org1.mspid,
+    type: 'X.509',
+  };
+
+  await wallet.put('appUser', identity);
+
+  await gateway.connect(ccp, {
+    wallet: wallet,
+    identity: 'appUser',
+    discovery: { enabled: true, asLocalhost: true },
+  });
+
+  const network = await gateway.getNetwork('ws-supplier-channel');
+  const contract = network.getContract('ws-supplier-cc');
+
+  await contract.submitTransaction('ProcessAsset', JSON.stringify(asset));
+  await gateway.disconnect();
+};
+
+//! TODO: @Lucinda
+export const PackageAsset = async (asset) => {
+  const gateway = new Gateway();
+  const wallet = await Wallets.newInMemoryWallet();
+  const identity = {
+    credentials: {
+      certificate: certContent,
+      privateKey: privateKey,
+    },
+    mspId: cpp.organizations.Org1.mspid,
+    type: 'X.509',
+  };
+
+  await wallet.put('appUser', identity);
+
+  await gateway.connect(ccp, {
+    wallet: wallet,
+    identity: 'appUser',
+    discovery: { enabled: true, asLocalhost: true },
+  });
+
+  const network = await gateway.getNetwork('ws-supplier-channel');
+  const contract = network.getContract('ws-supplier-cc');
+
+  await contract.submitTransaction('PackageAsset', JSON.stringify(asset));
+  await gateway.disconnect();
+};
+
+//! TODO: @Lucinda
+export const ShipAsset = async (asset) => {
+  const gateway = new Gateway();
+  const wallet = await Wallets.newInMemoryWallet();
+  const identity = {
+    credentials: {
+      certificate: certContent,
+      privateKey: privateKey,
+    },
+    mspId: cpp.organizations.Org1.mspid,
+    type: 'X.509',
+  };
+
+  await wallet.put('appUser', identity);
+
+  await gateway.connect(ccp, {
+    wallet: wallet,
+    identity: 'appUser',
+    discovery: { enabled: true, asLocalhost: true },
+  });
+
+  const network = await gateway.getNetwork('ws-supplier-channel');
+  const contract = network.getContract('ws-supplier-cc');
+
+  await contract.submitTransaction('ShipAsset', JSON.stringify(asset));
+  await gateway.disconnect();
+};
+
+//! TODO: @Lucinda
+export const CompleteShipment = async (asset) => {
+  const gateway = new Gateway();
+  const wallet = await Wallets.newInMemoryWallet();
+  const identity = {
+    credentials: {
+      certificate: certContent,
+      privateKey: privateKey,
+    },
+    mspId: cpp.organizations.Org1.mspid,
+    type: 'X.509',
+  };
+
+  await wallet.put('appUser', identity);
+
+  await gateway.connect(ccp, {
+    wallet: wallet,
+    identity: 'appUser',
+    discovery: { enabled: true, asLocalhost: true },
+  });
+
+  const network = await gateway.getNetwork('ws-supplier-channel');
+  const contract = network.getContract('ws-supplier-cc');
+
+  await contract.submitTransaction('CompleteShipment', JSON.stringify(asset));
+  await gateway.disconnect();
 };
 
 export const getAllResults = async () => {

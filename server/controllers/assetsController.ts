@@ -25,7 +25,7 @@ export const getAssetByIdController = (req, res) => {
 };
 
 export const updateAssetController = (req, res) => {
-  const updatedAsset = updateAsset(req.params.AssetId, req.body);
+  const updatedAsset = updateAsset(req.params.AssetId);
   if (updatedAsset) {
     res.json(updatedAsset);
   } else {
@@ -35,11 +35,7 @@ export const updateAssetController = (req, res) => {
 
 export const deleteAssetController = (req, res) => {
   const success = deleteAsset(req.params.AssetId);
-  if (success) {
-    res.status(204).send();
-  } else {
-    res.status(404).send('Asset not found');
-  }
+  res.json({ success });
 };
 
 export const assetExistsController = (req, res) => {
@@ -53,7 +49,7 @@ export const getAllAssetsController = (req, res) => {
 };
 
 export const transferAssetController = (req, res) => {
-  const asset = transferAsset(req.params.assetId, req.body.NewOwner);
+  const asset = transferAsset(req.params.assetId);
   if (asset) {
     res.json(asset);
   } else {

@@ -54,12 +54,12 @@ export const createAsset = async (asset) => {
   const wallet = await Wallets.newInMemoryWallet();
   await gateway.connect(ccp, {
     wallet: wallet,
-    identity: 'admin',
+    identity: ccp.organizations.Org1.mspid,
     discovery: { enabled: true, asLocalhost: true },
   });
 
-  const network = await gateway.getNetwork('Network');
-  const contract = network.getContract('asset');
+  const network = await gateway.getNetwork('ws-supplier-channel');
+  const contract = network.getContract();
 
   await contract.submitTransaction('CreateAsset', JSON.stringify(asset));
   await gateway.disconnect();
@@ -70,14 +70,20 @@ export const updateAsset = async (asset) => {
   const wallet = await Wallets.newInMemoryWallet();
   await gateway.connect(ccp, {
     wallet: wallet,
-    identity: 'admin',
+    identity: ccp.organizations.Org1.mspid,
     discovery: { enabled: true, asLocalhost: true },
   });
 
-  const network = await gateway.getNetwork('Network');
+  const network = await gateway.getNetwork('ws-supplier-channel');
   const contract = network.getContract('asset');
 
-  await contract.submitTransaction('UpdateAsset', JSON.stringify(asset));
+  const oldAsset = await contract.evaluateTransaction('GetAssetById', asset.Id);
+  if (oldAsset) {
+    const newAsset = JSON.parse(oldAsset.toString());
+    newAsset = { ...newAsset, ...asset };
+    await contract.submitTransaction('UpdateAsset', JSON.stringify(newAsset));
+  }
+
   await gateway.disconnect();
 };
 
@@ -86,11 +92,11 @@ export const deleteAsset = async (id) => {
   const wallet = await Wallets.newInMemoryWallet();
   await gateway.connect(ccp, {
     wallet: wallet,
-    identity: 'admin',
+    identity: ccp.organizations.Org1.mspid,
     discovery: { enabled: true, asLocalhost: true },
   });
 
-  const network = await gateway.getNetwork('Network');
+  const network = await gateway.getNetwork('ws-supplier-channel');
   const contract = network.getContract('asset');
 
   await contract.submitTransaction('DeleteAsset', id);
@@ -102,14 +108,14 @@ export const getAllAssets = async () => {
   const wallet = await Wallets.newInMemoryWallet();
   await gateway.connect(ccp, {
     wallet: wallet,
-    identity: 'admin',
+    identity: ccp.organizations.Org1.mspid,
     discovery: { enabled: true, asLocalhost: true },
   });
 
-  const network = await gateway.getNetwork('Network');
+  const network = await gateway.getNetwork('ws-supplier-channel');
   const contract = network.getContract('asset');
 
-  const result = await contract.evaluateTransaction('QueryAllAssets');
+  const result = await contract.evaluateTransaction('GetAllAssets');
   await gateway.disconnect();
   return JSON.parse(result.toString());
 };
@@ -119,11 +125,11 @@ export const transferAsset = async (asset) => {
   const wallet = await Wallets.newInMemoryWallet();
   await gateway.connect(ccp, {
     wallet: wallet,
-    identity: 'admin',
+    identity: ccp.organizations.Org1.mspid,
     discovery: { enabled: true, asLocalhost: true },
   });
 
-  const network = await gateway.getNetwork('Network');
+  const network = await gateway.getNetwork('ws-supplier-channel');
   const contract = network.getContract('asset');
 
   await contract.submitTransaction('TransferAsset', JSON.stringify(asset));
@@ -135,11 +141,11 @@ export const getAssetsByOwner = async (asset) => {
   const wallet = await Wallets.newInMemoryWallet();
   await gateway.connect(ccp, {
     wallet: wallet,
-    identity: 'admin',
+    identity: ccp.organizations.Org1.mspid,
     discovery: { enabled: true, asLocalhost: true },
   });
 
-  const network = await gateway.getNetwork('Network');
+  const network = await gateway.getNetwork('ws-supplier-channel');
   const contract = network.getContract('asset');
 
   await contract.submitTransaction('ChangeAssetOwner', JSON.stringify(asset));
@@ -151,11 +157,11 @@ export const getAssetHistory = async (id) => {
   const wallet = await Wallets.newInMemoryWallet();
   await gateway.connect(ccp, {
     wallet: wallet,
-    identity: 'admin',
+    identity: ccp.organizations.Org1.mspid,
     discovery: { enabled: true, asLocalhost: true },
   });
 
-  const network = await gateway.getNetwork('Network');
+  const network = await gateway.getNetwork('ws-supplier-channel');
   const contract = network.getContract('asset');
 
   const result = await contract.evaluateTransaction('GetAssetHistory', id);
@@ -168,14 +174,14 @@ export const getAssetById = async (Id) => {
   const wallet = await Wallets.newInMemoryWallet();
   await gateway.connect(ccp, {
     wallet: wallet,
-    identity: 'admin',
+    identity: ccp.organizations.Org1.mspid,
     discovery: { enabled: true, asLocalhost: true },
   });
 
-  const network = await gateway.getNetwork('Network');
+  const network = await gateway.getNetwork('ws-supplier-channel');
   const contract = network.getContract('asset');
 
-  const result = await contract.evaluateTransaction('GetAssetByRange', Id);
+  const result = await contract.evaluateTransaction('GetAssetById', Id);
   await gateway.disconnect();
   return JSON.parse(result.toString());
 };
@@ -185,13 +191,12 @@ export const assetExists = async (id) => {
   const wallet = await Wallets.newInMemoryWallet();
   await gateway.connect(ccp, {
     wallet: wallet,
-    identity: 'admin',
+    identity: ccp.organizations.Org1.mspid,
     discovery: { enabled: true, asLocalhost: true },
   });
 
-  const network = await gateway.getNetwork('Network');
+  const network = await gateway.getNetwork('ws-supplier-channel');
   const contract = network.getContract('asset');
-  console.log('id', id);
   const result = await contract.evaluateTransaction('AssetExists', id);
   await gateway.disconnect();
   return JSON.parse(result.toString());

@@ -1,6 +1,16 @@
 'use strict';
 
 const { Contract } = require('fabric-contract-api');
+const { ClientIdentity } = require('fabric-shim');
+
+const AssetProperties = Object.freeze({
+    ORIGIN: 0,
+    PROCESSING: 1,
+    PACKAGING: 2,
+    SHIPMENT: 3,
+    CURRENTOWNER: 4,
+    TRANSACTIONHISTORY: 5
+});
 
 class AssetTransfer extends Contract {
 
@@ -81,30 +91,53 @@ class AssetTransfer extends Contract {
         }
     }
 
+    async TestMethod(ctx) {
+        id = new ClientIdentity(ctx.stub);
+        console.info(id.getID());
+    }
+
     // CreateAsset issues a new asset to the world state with given details.
     async CreateAsset(
         ctx, 
         itemID, 
         itemName, 
-        origin = {Farm, OriginLocation, Certifications, HarvestDate},
-        processing = {Processor, ProcessingLocation, ProcessDate, ProcessType},
-        packaging = {Packager, PackagingLocation, PackageDate, PackageType},
-        shipment = {Shipper, ShipmentID, Origin, Destination, DepartureDate, ArrivalDate},
-        currentOwner = {Entity, OwnerLocation, ReceivedDate},
-        transactionHistory = [{TransactionID, Timestamp, From, To, Details}]
+        origin,
+        processing,
+        packaging,
+        shipment,
+        currentOwner,
+        transactionHistory
     ) {
-        const asset = {
-            ItemID: itemID,
-            ItemName: itemName,
-            Origin: origin,
-            Processing: processing,
-            Packaging: packaging,
-            Shipment: shipment,
-            CurrentOwner: currentOwner,
-            TransactionHistory: transactionHistory,
-        };
-        await ctx.stub.putState(itemID, Buffer.from(JSON.stringify(asset)));
-        return JSON.stringify(asset);
+        origin = JSON.parse(origin);
+        processing = JSON.parse(processing);
+        packaging = JSON.parse(packaging);
+        shipment = JSON.parse(shipment);
+        currentOwner = JSON.parse(currentOwner);
+        transactionHistory = JSON.parse(transactionHistory);
+        if (
+            this.HasCorrectKeys(origin, AssetProperties.ORIGIN) 
+            && this.HasCorrectKeys(processing, AssetProperties.PROCESSING)
+            && this.HasCorrectKeys(packaging, AssetProperties.PACKAGING)
+            && this.HasCorrectKeys(shipment, AssetProperties.SHIPMENT)
+            && this.HasCorrectKeys(currentOwner, AssetProperties.CURRENTOWNER)
+            && this.HasCorrectKeys(transactionHistory, AssetProperties.TRANSACTIONHISTORY)
+        ) {
+            const asset = {
+                ItemID: itemID,
+                ItemName: itemName,
+                Origin: origin,
+                Processing: processing,
+                Packaging: packaging,
+                Shipment: shipment,
+                CurrentOwner: currentOwner,
+                TransactionHistory: transactionHistory,
+            };
+            await ctx.stub.putState(itemID, Buffer.from(JSON.stringify(asset)));
+            return JSON.stringify(asset);
+        }
+        else { 
+            throw new Error(`Incorrect parameter structure.`);
+        }
     }
 
     // ReadAsset returns the asset stored in the world state with given id.
@@ -121,30 +154,48 @@ class AssetTransfer extends Contract {
         ctx, 
         itemID, 
         itemName, 
-        origin = {Farm, OriginLocation, Certifications, HarvestDate},
-        processing = {Processor, ProcessingLocation, ProcessDate, ProcessType},
-        packaging = {Packager, PackagingLocation, PackageDate, PackageType},
-        shipment = {Shipper, ShipmentID, Origin, Destination, DepartureDate, ArrivalDate},
-        currentOwner = {Entity, OwnerLocation, ReceivedDate},
-        transactionHistory = [{TransactionID, Timestamp, From, To, Details}]
+        origin,
+        processing,
+        packaging,
+        shipment ,
+        currentOwner,
+        transactionHistory
     ) {
         const exists = await this.AssetExists(ctx, itemID);
         if (!exists) {
             throw new Error(`The asset ${itemID} does not exist`);
         }
 
-        // overwriting original asset with new asset
-        const updatedAsset = {
-            ItemID: itemID,
-            ItemName: itemName,
-            Origin: origin,
-            Processing: processing,
-            Packaging: packaging,
-            Shipment: shipment,
-            CurrentOwner: currentOwner,
-            TransactionHistory: transactionHistory,
-        };
-        return ctx.stub.putState(itemID, Buffer.from(JSON.stringify(updatedAsset)));
+        origin = JSON.parse(origin);
+        processing = JSON.parse(processing);
+        packaging = JSON.parse(packaging);
+        shipment = JSON.parse(shipment);
+        currentOwner = JSON.parse(currentOwner);
+        transactionHistory = JSON.parse(transactionHistory);
+        if (
+            this.HasCorrectKeys(origin, AssetProperties.ORIGIN) 
+            && this.HasCorrectKeys(processing, AssetProperties.PROCESSING)
+            && this.HasCorrectKeys(packaging, AssetProperties.PACKAGING)
+            && this.HasCorrectKeys(shipment, AssetProperties.SHIPMENT)
+            && this.HasCorrectKeys(currentOwner, AssetProperties.CURRENTOWNER)
+            && this.HasCorrectKeys(transactionHistory, AssetProperties.TRANSACTIONHISTORY)
+        ) {
+            // overwriting original asset with new asset
+            const updatedAsset = {
+                ItemID: itemID,
+                ItemName: itemName,
+                Origin: origin,
+                Processing: processing,
+                Packaging: packaging,
+                Shipment: shipment,
+                CurrentOwner: currentOwner,
+                TransactionHistory: transactionHistory,
+            };
+            return ctx.stub.putState(itemID, Buffer.from(JSON.stringify(updatedAsset)));
+        }
+        else { 
+            throw new Error(`Incorrect parameter structure.`);
+        }
     }
 
     // DeleteAsset deletes an given asset from the world state.
@@ -169,17 +220,28 @@ class AssetTransfer extends Contract {
         newOwner = {Entity, OwnerLocation, ReceivedDate},
         transferTransaction = {TransactionID, Details}
     ) {
-        const assetString = await this.ReadAsset(ctx, itemID);
-        const asset = JSON.parse(assetString);
-        asset.TransactionHistory.push({
-            TransactionID: transferTransaction.TransactionID,
-            Timestamp: (new Date()).toISOString(),
-            From: asset.CurrentOwner.Entity,
-            To: newOwner.Entity,
-            Details: transferTransaction.Details
-        });
-        asset.CurrentOwner = newOwner;
-        return ctx.stub.putState(itemID, Buffer.from(JSON.stringify(asset)));
+        const exists = await this.AssetExists(ctx, itemID);
+        if (!exists) {
+            throw new Error(`The asset ${itemID} does not exist`);
+        }
+        newOwner = JSON.parse(newOwner);
+        if (this.HasCorrectKeys(newOwner)) {
+            const assetString = await this.ReadAsset(ctx, itemID);
+            const asset = JSON.parse(assetString);
+            asset.TransactionHistory.push({
+                TransactionID: transferTransaction.TransactionID,
+                Timestamp: (new Date()).toISOString(),
+                From: asset.CurrentOwner.Entity,
+                To: newOwner.Entity,
+                Details: transferTransaction.Details
+            });
+            asset.CurrentOwner = newOwner;
+            return ctx.stub.putState(itemID, Buffer.from(JSON.stringify(asset)));
+        }
+        else { 
+            throw new Error(`Incorrect parameter structure.`);
+        }
+
     }
 
     // GetAllResults returns all the results from an iterator
@@ -226,6 +288,11 @@ class AssetTransfer extends Contract {
 
     // GetAssetHistory returns the chain of custody for an asset since issuance.
 	async GetAssetHistory(ctx, itemID) {
+        const exists = await this.AssetExists(ctx, itemID);
+        if (!exists) {
+            throw new Error(`The asset ${itemID} does not exist`);
+        }
+
 		const iterator = await ctx.stub.getHistoryForKey(itemID);
 		const results = await this.GetAllResults(iterator, true);
 
@@ -246,10 +313,65 @@ class AssetTransfer extends Contract {
 		let queryString = {};
 		queryString.selector = {};
 		queryString.selector.DocType = 'asset';
+        queryString.selector.CurrentOwner = {}
 		queryString.selector.CurrentOwner.Entity = ownerEntity;
 		return await this.GetQueryResultForQueryString(ctx, JSON.stringify(queryString)); 
 	}
 
+    async HasCorrectKeys(obj, propertyType) {
+        switch(propertyType) {
+            case AssetProperties.ORIGIN:
+                return (
+                    obj.hasOwnProperty("Farm") 
+                    && obj.hasOwnProperty("OriginLocation") 
+                    && obj.hasOwnProperty("Certifications") 
+                    && obj.hasOwnProperty("HarvestDate")
+                );
+            case AssetProperties.PROCESSING:
+                return (
+                    obj.hasOwnProperty("Processor") 
+                    && obj.hasOwnProperty("ProcessingLocation") 
+                    && obj.hasOwnProperty("ProcessDate") 
+                    && obj.hasOwnProperty("ProcessType")
+                );
+            case AssetProperties.PACKAGING:
+                return (
+                    obj.hasOwnProperty("Packager") 
+                    && obj.hasOwnProperty("PackagingLocation") 
+                    && obj.hasOwnProperty("PackageDate") 
+                    && obj.hasOwnProperty("PackageType")
+                );
+            case AssetProperties.SHIPMENT:
+                return (
+                    obj.hasOwnProperty("Shipper") 
+                    && obj.hasOwnProperty("ShipmentID") 
+                    && obj.hasOwnProperty("Origin") 
+                    && obj.hasOwnProperty("Destination") 
+                    && obj.hasOwnProperty("DepartureDate") 
+                    && obj.hasOwnProperty("ArrivalDate") 
+                    && obj.hasOwnProperty("Status")
+                );
+            case AssetProperties.CURRENTOWNER:
+                return (
+                    obj.hasOwnProperty("Entity") 
+                    && obj.hasOwnProperty("OwnerLocation") 
+                    && obj.hasOwnProperty("ReceivedDate") 
+                );
+            case AssetProperties.TRANSACTIONHISTORY:
+                if (!Array.isArray(obj)) {
+                    return false;
+                }
+                return obj.every((item) => 
+                    item.hasOwnProperty("TransactionID") 
+                    && item.hasOwnProperty("Timestamp") 
+                    && item.hasOwnProperty("From") 
+                    && item.hasOwnProperty("To") 
+                    && item.hasOwnProperty("Details") 
+                )
+            default:
+                return false
+        }
+    }
 }
 
 module.exports = AssetTransfer;

@@ -90,9 +90,6 @@ class AssetTransfer extends Contract {
         }
     }
 
-    async TestMethod(ctx) {
-        return JSON.stringify(ctx.clientIdentity.getMSPID())
-    }
 
     // CreateAsset issues a new asset to the world state with given details.
     async CreateAsset(

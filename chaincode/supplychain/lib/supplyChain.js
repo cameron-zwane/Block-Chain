@@ -16,78 +16,388 @@ class AssetTransfer extends Contract {
     async InitLedger(ctx) {
         const assets = [
             {
-                ItemID: "1234567890",
+                ItemID: "00000001",
                 ItemName: "Organic Fair-Trade Coffee Beans",
                 Origin: {
                     Farm: "Green Valley Farm",
                     OriginLocation: "Ethiopia",
-                    Certifications: ["Organic", "Fair Trade"],
+                    Certifications: [
+                        "Organic", 
+                        "Fair Trade"
+                    ],
                     HarvestDate: "2024-04-15"
                 },
                 Processing: {
-                    Processor: "Ethiopian Coffee Processing Ltd.",
-                    ProcessingLocation: "Addis Ababa, Ethiopia",
-                    ProcessDate: "2024-04-20",
-                    ProcessType: "Wet Processing"
+                    Processor: "",
+                    ProcessingLocation: "",
+                    ProcessDate: "",
+                    ProcessType: ""
                 },
                 Packaging: {
-                    Packager: "Global Coffee Packers Inc.",
-                    PackagingLocation: "Nairobi, Kenya",
-                    PackageDate: "2024-04-25",
-                    PackageType: "Eco-friendly Bags"
+                    Packager: "",
+                    PackagingLocation: "",
+                    PackageDate: "",
+                    PackageType: ""
                 },
                 Shipment: {
-                    Shipper: "International Shippers Co.",
-                    ShipmentID: "SHIP987654321",
-                    Origin: "Nairobi, Kenya",
-                    Destination: "New York, USA",
-                    DepartureDate: "2024-05-01",
-                    ArrivalDate: "2024-05-10",
-                    Status: "In Transit"
+                    Shipper: "",
+                    ShipmentID: "",
+                    Origin: "",
+                    Destination: "",
+                    DepartureDate: "",
+                    ArrivalDate: "",
+                    Status: ""
                 },
                 CurrentOwner: {
-                    Entity: "Coffee Distributors USA",
-                    OwnerLocation: "New York, USA",
-                    ReceivedDate: "2024-05-10"
+                    Entity: "Green Valley Farm",
+                    OwnerLocation: "Ethiopia",
+                    ReceivedDate: "2024-04-15"
                 },
-                TransactionHistory: [
-                    {
-                        TransactionID: "TXN12345",
-                        Timestamp: "2024-04-15T08:30:00Z",
-                        From: "Green Valley Farm",
-                        To: "Ethiopian Coffee Processing Ltd.",
-                        Details: "Harvested and sent for processing"
-                    },
-                    {
-                        TransactionID: "TXN12346",
-                        Timestamp: "2024-04-20T10:00:00Z",
-                        From: "Ethiopian Coffee Processing Ltd.",
-                        To: "Global Coffee Packers Inc.",
-                        Details: "Processed and sent for packaging"
-                    },
-                    {
-                        TransactionID: "TXN12347",
-                        Timestamp: "2024-04-25T15:00:00Z",
-                        From: "Global Coffee Packers Inc.",
-                        To: "International Shippers Co.",
-                        Details: "Packaged and sent for shipment"
-                    },
-                    {
-                        TransactionID: "TXN12348",
-                        Timestamp: "2024-05-10T12:00:00Z",
-                        From: "International Shippers Co.",
-                        To: "Coffee Distributors USA",
-                        Details: "Shipped and received"
-                    }
-                ]
+                TransactionHistory: []
             },
+            {
+                ItemID: "00000002",
+                ItemName: "Organic Fair-Trade Arabica Coffee Beans",
+                Origin: {
+                    Farm: "Green Valley Farm",
+                    OriginLocation: "Ethiopia",
+                    Certifications: [
+                        "Organic",
+                        "Fair Trade"
+                    ],
+                    HarvestDate: "2024-04-15"
+                },
+                Processing: {
+                    Processor: "",
+                    ProcessingLocation: "",
+                    ProcessDate: "",
+                    ProcessType: ""
+                },
+                Packaging: {
+                    Packager: "",
+                    PackagingLocation: "",
+                    PackageDate: "",
+                    PackageType: ""
+                },
+                Shipment: {
+                    Shipper: "",
+                    ShipmentID: "",
+                    Origin: "",
+                    Destination: "",
+                    DepartureDate: "",
+                    ArrivalDate: "",
+                    Status: ""
+                },
+                CurrentOwner: {
+                    Entity: "Green Valley Farm",
+                    OwnerLocation: "Ethiopia",
+                    ReceivedDate: "2024-04-15"
+                },
+                TransactionHistory: []
+            },
+            {
+                ItemID: "00000003",
+                ItemName: "Organic Fair-Trade Robusta Coffee Beans",
+                Origin: {
+                    Farm: "Green Valley Farm",
+                    OriginLocation: "Ethiopia",
+                    Certifications: [
+                        "Organic",
+                        "Fair Trade"
+                    ],
+                    HarvestDate: "2024-04-15"
+                },
+                Processing: {
+                    Processor: "",
+                    ProcessingLocation: "",
+                    ProcessDate: "",
+                    ProcessType: ""
+                },
+                Packaging: {
+                    Packager: "",
+                    PackagingLocation: "",
+                    PackageDate: "",
+                    PackageType: ""
+                },
+                Shipment: {
+                    Shipper: "",
+                    ShipmentID: "",
+                    Origin: "",
+                    Destination: "",
+                    DepartureDate: "",
+                    ArrivalDate: "",
+                    Status: ""
+                },
+                CurrentOwner: {
+                    Entity: "Green Valley Farm",
+                    OwnerLocation: "Ethiopia",
+                    ReceivedDate: "2024-04-15"
+                },
+                TransactionHistory: []
+            },
+            {
+                ItemID: "00000004",
+                ItemName: "Fair-Trade Java Coffee Beans",
+                Origin: {
+                    Farm: "Green Valley Farm",
+                    OriginLocation: "Ethiopia",
+                    Certifications: [
+                        "Organic",
+                        "Fair Trade"
+                    ],
+                    HarvestDate: "2024-04-10"
+                },
+                Processing: {
+                    Processor: "",
+                    ProcessingLocation: "",
+                    ProcessDate: "",
+                    ProcessType: ""
+                },
+                Packaging: {
+                    Packager: "",
+                    PackagingLocation: "",
+                    PackageDate: "",
+                    PackageType: ""
+                },
+                Shipment: {
+                    Shipper: "",
+                    ShipmentID: "",
+                    Origin: "",
+                    Destination: "",
+                    DepartureDate: "",
+                    ArrivalDate: "",
+                    Status: ""
+                },
+                CurrentOwner: {
+                    Entity: "Green Valley Farm",
+                    OwnerLocation: "Ethiopia",
+                    ReceivedDate: "2024-04-10"
+                },
+                TransactionHistory: []
+            },
+            {
+                ItemID: "00000005",
+                ItemName: "Liberica Coffee Beans",
+                Origin: {
+                    Farm: "Green Valley Farm",
+                    OriginLocation: "Ethiopia",
+                    Certifications: [
+                        "Organic",
+                        "Fair Trade"
+                    ],
+                    HarvestDate: "2024-04-11"
+                },
+                Processing: {
+                    Processor: "",
+                    ProcessingLocation: "",
+                    ProcessDate: "",
+                    ProcessType: ""
+                },
+                Packaging: {
+                    Packager: "",
+                    PackagingLocation: "",
+                    PackageDate: "",
+                    PackageType: ""
+                },
+                Shipment: {
+                    Shipper: "",
+                    ShipmentID: "",
+                    Origin: "",
+                    Destination: "",
+                    DepartureDate: "",
+                    ArrivalDate: "",
+                    Status: ""
+                },
+                CurrentOwner: {
+                    Entity: "Green Valley Farm",
+                    OwnerLocation: "Ethiopia",
+                    ReceivedDate: "2024-04-11"
+                },
+                TransactionHistory: []
+            },
+            {
+                ItemID: "00000006",
+                ItemName: "Organic Fair-Trade Excelsa Coffee Beans",
+                Origin: {
+                    Farm: "Green Valley Farm",
+                    OriginLocation: "Ethiopia",
+                    Certifications: [
+                        "Organic",
+                        "Fair Trade"
+                    ],
+                    HarvestDate: "2024-07-23"
+                },
+                Processing: {
+                    Processor: "",
+                    ProcessingLocation: "",
+                    ProcessDate: "",
+                    ProcessType: ""
+                },
+                Packaging: {
+                    Packager: "",
+                    PackagingLocation: "",
+                    PackageDate: "",
+                    PackageType: ""
+                },
+                Shipment: {
+                    Shipper: "",
+                    ShipmentID: "",
+                    Origin: "",
+                    Destination: "",
+                    DepartureDate: "",
+                    ArrivalDate: "",
+                    Status: ""
+                },
+                CurrentOwner: {
+                    Entity: "Green Valley Farm",
+                    OwnerLocation: "Ethiopia",
+                    ReceivedDate: "2024-07-23"
+                },
+                TransactionHistory: []
+            }
         ];
-
+    
+        //populate seed assets
         for (const asset of assets) {
             asset.DocType = 'asset';
             await ctx.stub.putState(asset.ItemID, Buffer.from(JSON.stringify(asset)));
             console.info(`Asset ${asset.ItemID} initialized`);
         }
+    
+        // process seed assets
+        await this.ProcessAsset(
+            ctx, 
+            "00000001", 
+            "Ethiopian Coffee Processing Ltd.",
+            "Addis Ababa, Ethiopia",
+            "2024-04-20",
+            "Wet Processing",
+            "TXN00001"
+        );
+        await this.ProcessAsset(
+            ctx, 
+            "00000002", 
+            "Ethiopian Coffee Processing Ltd.",
+            "Addis Ababa, Ethiopia",
+            "2024-04-20",
+            "Wet Processing",
+            "TXN00002"
+        );
+        await this.ProcessAsset(
+            ctx, 
+            "00000003", 
+            "Ethiopian Coffee Processing Ltd.",
+            "Addis Ababa, Ethiopia",
+            "2024-04-21",
+            "Dry Processing",
+            "TXN00003"
+        );
+        await this.ProcessAsset(
+            ctx, 
+            "00000004", 
+            "Ethiopian Coffee Processing Ltd.",
+            "Addis Ababa, Ethiopia",
+            "2024-04-24",
+            "Wet Processing",
+            "TXN00004"
+        );
+        await this.ProcessAsset(
+            ctx, 
+            "00000005", 
+            "Ethiopian Coffee Processing Ltd.",
+            "Addis Ababa, Ethiopia",
+            "2024-04-24",
+            "Wet Processing",
+            "TXN00005"
+        );
+    
+        //package seed assets
+        await this.PackageAsset(
+            ctx, 
+            "00000001", 
+            "Global Coffee Packers Inc.",
+            "Nairobi, Kenya",
+            "2024-04-25",
+            "Eco-friendly Bags",
+            "TXN00006"
+        );
+        await this.PackageAsset(
+            ctx, 
+            "00000002", 
+            "Global Coffee Packers Inc.",
+            "Nairobi, Kenya",
+            "2024-04-25",
+            "Eco-friendly Bags",
+            "TXN00007"
+        );
+        await this.PackageAsset(
+            ctx, 
+            "00000004", 
+            "Global Coffee Packers Inc.",
+            "Nairobi, Kenya",
+            "2024-04-26",
+            "Plastic Bags",
+            "TXN00008"
+        );
+        await this.PackageAsset(
+            ctx, 
+            "00000005", 
+            "Global Coffee Packers Inc.",
+            "Nairobi, Kenya",
+            "2024-04-26",
+            "Plastic Bags",
+            "TXN00009"
+        );
+    
+        //ship seed assets
+        await this.ShipAsset(
+            ctx, 
+            "00000001", 
+            "International Shippers Co.",
+            "SHIP000000301",
+            "New York, USA",
+            "2024-05-01",
+            "In Transit",
+            "TXN00010"
+        );
+        await this.ShipAsset(
+            ctx, 
+            "00000002", 
+            "International Shippers Co.",
+            "SHIP000000302",
+            "New York, USA",
+            "2024-05-02",
+            "In Transit",
+            "TXN00011"
+        );
+        await this.ShipAsset(
+            ctx, 
+            "00000004", 
+            "International Shippers Co.",
+            "SHIP000000303",
+            "New York, USA",
+            "2024-05-04",
+            "In Transit",
+            "TXN00012"
+        );
+    
+        //complete seed shipments
+        await this.CompleteShipment(
+            ctx, 
+            "00000001", 
+            "Coffee Distributors USA",
+            "2024-05-10",
+            "Shipped",
+            "TXN00013"
+        );
+        await this.CompleteShipment(
+            ctx, 
+            "00000002", 
+            "Coffee Distributors USA",
+            "2024-05-12",
+            "Shipped",
+            "TXN00014"
+        );
     }
 
 
@@ -128,6 +438,7 @@ class AssetTransfer extends Contract {
                 TransactionHistory: transactionHistory,
             };
             await ctx.stub.putState(itemID, Buffer.from(JSON.stringify(asset)));
+            console.info(`Asset ${asset.ItemID} initialized`);
             return JSON.stringify(asset);
         }
         else { 

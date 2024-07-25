@@ -11,62 +11,102 @@ import {
 } from '../models/assetModel.js';
 
 export const createAssetController = (req, res) => {
-  const asset = createAsset(req.body);
-  res.status(201).json(asset);
+  try {
+    const asset = createAsset(req.body);
+    res.status(201).json(asset);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
 };
 
 export const getAssetByIdController = (req, res) => {
-  const asset = getAssetById(req.params.AssetId);
-  if (asset) {
-    res.json(asset);
-  } else {
-    res.status(404).send('Asset not found');
+  try {
+    const asset = getAssetById(req.params.assetId);
+    if (asset) {
+      res.json(asset);
+    } else {
+      res.status(404).send('Asset not found');
+    }
+  } catch (error) {
+    res.status(400).json({ error: error.message });
   }
 };
 
 export const updateAssetController = (req, res) => {
-  const updatedAsset = updateAsset(req.params.AssetId);
-  if (updatedAsset) {
-    res.json(updatedAsset);
-  } else {
-    res.status(404).send('Asset not found');
+  try {
+    const updatedAsset = updateAsset(req.params.assetId, req.body);
+    if (updatedAsset) {
+      res.json(updatedAsset);
+    } else {
+      res.status(404).send('Asset not found');
+    }
+  } catch (error) {
+    res.status(400).json({ error: error.message });
   }
 };
 
 export const deleteAssetController = (req, res) => {
-  const success = deleteAsset(req.params.AssetId);
-  res.json({ success });
+  try {
+    const success = deleteAsset(req.params.assetId);
+    if (success) {
+      res.json({ success });
+    } else {
+      res.status(404).send('Asset not found');
+    }
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
 };
 
 export const assetExistsController = (req, res) => {
-  const exists = assetExists(req.params.AssetId);
-  res.json({ exists });
+  try {
+    const exists = assetExists(req.params.assetId);
+    res.json({ exists });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
 };
 
 export const getAllAssetsController = (req, res) => {
-  const assets = getAllAssets();
-  res.json(assets);
+  try {
+    const assets = getAllAssets();
+    res.json(assets);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
 };
 
 export const transferAssetController = (req, res) => {
-  const asset = transferAsset(req.params.assetId);
-  if (asset) {
-    res.json(asset);
-  } else {
-    res.status(404).send('Asset not found');
+  try {
+    const asset = transferAsset(req.params.assetId, req.body);
+    if (asset) {
+      res.json(asset);
+    } else {
+      res.status(404).send('Asset not found');
+    }
+  } catch (error) {
+    res.status(400).json({ error: error.message });
   }
 };
 
 export const getAssetHistoryController = (req, res) => {
-  const history = getAssetHistory(req.params.assetId);
-  if (history) {
-    res.json(history);
-  } else {
-    res.status(404).send('Asset not found');
+  try {
+    const history = getAssetHistory(req.params.assetId);
+    if (history) {
+      res.json(history);
+    } else {
+      res.status(404).send('Asset not found');
+    }
+  } catch (error) {
+    res.status(400).json({ error: error.message });
   }
 };
 
 export const getAssetsByOwnerController = (req, res) => {
-  const assets = getAssetsByOwner(req.params.OwnerId);
-  res.json(assets);
+  try {
+    const assets = getAssetsByOwner(req.params.ownerId);
+    res.json(assets);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
 };

@@ -56,22 +56,48 @@ const ccp = {
   },
 };
 
-// TODO: @Rotenda
 export const createAsset = async (asset) => {
   const gateway = new Gateway();
-  const wallet = await Wallets.newInMemoryWallet();
-  await gateway.connect(ccp, {
-    wallet: wallet,
-    identity: ccp.organizations.Org1.mspid,
-    discovery: { enabled: true, asLocalhost: true },
-  });
+  try {
+    const wallet = await Wallets.newInMemoryWallet();
+    const identity = {
+      credentials: {
+        certificate: certContent,
+        privateKey: privateKey,
+      },
+      mspId: cpp.organizations.Org1.mspid,
+      type: 'X.509',
+    };
+  
+    await wallet.put('appUser', identity);
+  
+    await gateway.connect(ccp, {
+      wallet: wallet,
+      identity: 'appUser',
+      discovery: { enabled: true, asLocalhost: true },
+    });
+  
+    const network = await gateway.getNetwork('ws-supplier-channel');
+    const contract = network.getContract('ws-supplier-cc');
 
-  const network = await gateway.getNetwork('ws-supplier-channel');
-  const contract = network.getContract('ws-supplier-cc');
+    // Submit the transaction to create the asset
+    await contract.submitTransaction('CreateAsset', JSON.stringify(asset));
 
-  await contract.submitTransaction('CreateAsset', JSON.stringify(asset));
-  await gateway.disconnect();
+    console.log('Asset created successfully');
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error(`Failed to create asset: ${error.message}`);
+    } else {
+      console.error('An unknown error occurred');
+    }
+  } finally {
+    // Ensure the gateway is disconnected
+    if (gateway) {
+      await gateway.disconnect();
+    }
+  }
 };
+
 
 // ? @Lucinda Done
 export const updateAsset = async (asset) => {
@@ -132,62 +158,94 @@ export const updateAsset = async (asset) => {
 };
 
 // TODO: @Rotenda
-export const deleteAsset = async (id) => {
+export const deleteAsset = async (assetId) => {
   const gateway = new Gateway();
-  const wallet = await Wallets.newInMemoryWallet();
-  const identity = {
-    credentials: {
-      certificate: certContent,
-      privateKey: privateKey,
-    },
-    mspId: cpp.organizations.Org1.mspid,
-    type: 'X.509',
-  };
+  try {
+    const wallet = await Wallets.newInMemoryWallet();
+    const identity = {
+      credentials: {
+        certificate: certContent,
+        privateKey: privateKey,
+      },
+      mspId: cpp.organizations.Org1.mspid,
+      type: 'X.509',
+    };
+  
+    await wallet.put('appUser', identity);
+  
+    await gateway.connect(ccp, {
+      wallet: wallet,
+      identity: 'appUser',
+      discovery: { enabled: true, asLocalhost: true },
+    });
+  
+    const network = await gateway.getNetwork('ws-supplier-channel');
+    const contract = network.getContract('ws-supplier-cc');
 
-  await wallet.put('appUser', identity);
+    // Submit the transaction to delete the asset
+    await contract.submitTransaction('DeleteAsset', assetId);
 
-  await gateway.connect(ccp, {
-    wallet: wallet,
-    identity: 'appUser',
-    discovery: { enabled: true, asLocalhost: true },
-  });
-
-  const network = await gateway.getNetwork('ws-supplier-channel');
-  const contract = network.getContract('ws-supplier-cc');
-
-  await contract.submitTransaction('DeleteAsset', id);
-  await gateway.disconnect();
+    console.log('Asset deleted successfully');
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error(`Failed to delete asset: ${error.message}`);
+    } else {
+      console.error('An unknown error occurred');
+    }
+  } finally {
+    // Ensure the gateway is disconnected
+    if (gateway) {
+      await gateway.disconnect();
+    }
+  }
 };
 
-// TODO: @Rotenda
+
 export const getAllAssets = async () => {
   const gateway = new Gateway();
-  const wallet = await Wallets.newInMemoryWallet();
-  const identity = {
-    credentials: {
-      certificate: certContent,
-      privateKey: privateKey,
-    },
-    mspId: cpp.organizations.Org1.mspid,
-    type: 'X.509',
-  };
+  try {
+    const wallet = await Wallets.newInMemoryWallet();
+    const identity = {
+      credentials: {
+        certificate: certContent,
+        privateKey: privateKey,
+      },
+      mspId: cpp.organizations.Org1.mspid,
+      type: 'X.509',
+    };
+  
+    await wallet.put('appUser', identity);
+  
+    await gateway.connect(ccp, {
+      wallet: wallet,
+      identity: 'appUser',
+      discovery: { enabled: true, asLocalhost: true },
+    });
+  
+    const network = await gateway.getNetwork('ws-supplier-channel');
+    const contract = network.getContract('ws-supplier-cc');
 
-  await wallet.put('appUser', identity);
+    // Evaluate the transaction to get all assets
+    const result = await contract.evaluateTransaction('GetAllAssets');
 
-  await gateway.connect(ccp, {
-    wallet: wallet,
-    identity: 'appUser',
-    discovery: { enabled: true, asLocalhost: true },
-  });
+    // Parse the result to get an array of assets
+    const assets = JSON.parse(result.toString());
 
-  const network = await gateway.getNetwork('ws-supplier-channel');
-  const contract = network.getContract('ws-supplier-cc');
-
-  const result = await contract.evaluateTransaction('GetAllAssets');
-  await gateway.disconnect();
-  return JSON.parse(result.toString());
+    return assets;
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error(`Failed to get all assets: ${error.message}`);
+    } else {
+      console.error('An unknown error occurred');
+    }
+    return [];
+  } finally {
+    // Ensure the gateway is disconnected
+    if (gateway) {
+      await gateway.disconnect();
+    }
+  }
 };
-
 //! TODO: @Lucinda
 export const transferAsset = async (asset) => {
   const gateway = new Gateway();
@@ -244,33 +302,50 @@ export const getAssetsByOwner = async (asset) => {
   await gateway.disconnect();
 };
 
-// TODO: @Rotenda
-export const getAssetHistory = async (id) => {
+
+export const getAssetHistory = async (assetId) => {
   const gateway = new Gateway();
-  const wallet = await Wallets.newInMemoryWallet();
-  const identity = {
-    credentials: {
-      certificate: certContent,
-      privateKey: privateKey,
-    },
-    mspId: cpp.organizations.Org1.mspid,
-    type: 'X.509',
-  };
+  try {
+    const wallet = await Wallets.newInMemoryWallet();
+    const identity = {
+      credentials: {
+        certificate: certContent,
+        privateKey: privateKey,
+      },
+      mspId: cpp.organizations.Org1.mspid,
+      type: 'X.509',
+    };
+  
+    await wallet.put('appUser', identity);
+  
+    await gateway.connect(ccp, {
+      wallet: wallet,
+      identity: 'appUser',
+      discovery: { enabled: true, asLocalhost: true },
+    });
+  
+    const network = await gateway.getNetwork('ws-supplier-channel');
+    const contract = network.getContract('ws-supplier-cc');
+  
+    const result = await contract.evaluateTransaction('GetAssetHistory', id);
 
-  await wallet.put('appUser', identity);
+    // Parse the result to get an array of asset history records
+    const historyRecords = JSON.parse(result.toString());
 
-  await gateway.connect(ccp, {
-    wallet: wallet,
-    identity: 'appUser',
-    discovery: { enabled: true, asLocalhost: true },
-  });
-
-  const network = await gateway.getNetwork('ws-supplier-channel');
-  const contract = network.getContract('ws-supplier-cc');
-
-  const result = await contract.evaluateTransaction('GetAssetHistory', id);
-  await gateway.disconnect();
-  return JSON.parse(result.toString());
+    return historyRecords;
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error(`Failed to get asset history: ${error.message}`);
+    } else {
+      console.error('An unknown error occurred');
+    }
+    return [];
+  } finally {
+    // Ensure the gateway is disconnected
+    if (gateway) {
+      await gateway.disconnect();
+    }
+  }
 };
 
 // TODO: @Rotenda
@@ -303,32 +378,55 @@ export const getAssetById = async (Id) => {
 };
 
 // TODO: @Rotenda
-export const assetExists = async (id) => {
+export const assetExists = async (assetId) => {
   const gateway = new Gateway();
-  const wallet = await Wallets.newInMemoryWallet();
-  const identity = {
-    credentials: {
-      certificate: certContent,
-      privateKey: privateKey,
-    },
-    mspId: 'm-RF4XJNQFSRHZJCRYKU3TL3DBE4',
-    type: 'X.509',
-  };
+  try {
+    const wallet = await Wallets.newInMemoryWallet();
+    const identity = {
+      credentials: {
+        certificate: certContent,
+        privateKey: privateKey,
+      },
+      mspId: cpp.organizations.Org1.mspid,
+      type: 'X.509',
+    };
+  
+    await wallet.put('appUser', identity);
+  
+    await gateway.connect(ccp, {
+      wallet: wallet,
+      identity: 'appUser',
+      discovery: { enabled: true, asLocalhost: true },
+    });
+  
+    const network = await gateway.getNetwork('ws-supplier-channel');
+    const contract = network.getContract('ws-supplier-cc');
 
-  await wallet.put('appUser', identity);
+    // Evaluate the transaction to get the asset
+    const response = await contract.evaluateTransaction('AssetExist', assetId);
 
-  await gateway.connect(ccp, {
-    wallet: wallet,
-    identity: 'appUser',
-    discovery: { enabled: true, asLocalhost: true },
-  });
-
-  const network = await gateway.getNetwork('ws-supplier-channel');
-  const contract = network.getContract('ws-supplier-cc');
-  const result = await contract.evaluateTransaction('AssetExists', id);
-  await gateway.disconnect();
-  return JSON.parse(result.toString());
+    // Check if the asset exists
+    if (response && response.length > 0) {
+      const asset = JSON.parse(response.toString());
+      return asset !== null;
+    } else {
+      return false;
+    }
+  } catch (error) { // Specify the type of error
+    if (error instanceof Error) {
+      console.error(`Failed to check asset existence: ${error.message}`);
+    } else {
+      console.error('An unknown error occurred');
+    }
+    return false;
+  } finally {
+    // Ensure the gateway is disconnected
+    if (gateway) {
+      await gateway.disconnect();
+    }
+  }
 };
+
 
 // ? @Lucinda Done
 export const readAsset = async (id) => {
@@ -387,4 +485,50 @@ export const GetQueryResultForQueryString = async (id) => {
   );
   await gateway.disconnect();
   return JSON.parse(result.toString());
+};
+
+export const getAllResults = async () => {
+  const gateway = new Gateway();
+  try {
+    const wallet = await Wallets.newInMemoryWallet();
+    const identity = {
+      credentials: {
+        certificate: certContent,
+        privateKey: privateKey,
+      },
+      mspId: cpp.organizations.Org1.mspid,
+      type: 'X.509',
+    };
+  
+    await wallet.put('appUser', identity);
+  
+    await gateway.connect(ccp, {
+      wallet: wallet,
+      identity: 'appUser',
+      discovery: { enabled: true, asLocalhost: true },
+    });
+  
+    const network = await gateway.getNetwork('ws-supplier-channel');
+    const contract = network.getContract('ws-supplier-cc');
+
+    // Evaluate the transaction to get all assets
+    const result = await contract.evaluateTransaction('GetAllResults');
+
+    // Parse the result to get an array of assets
+    const assets = JSON.parse(result.toString());
+
+    return assets;
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error(`Failed to get all assets: ${error.message}`);
+    } else {
+      console.error('An unknown error occurred');
+    }
+    return [];
+  } finally {
+    // Ensure the gateway is disconnected
+    if (gateway) {
+      await gateway.disconnect();
+    }
+  }
 };

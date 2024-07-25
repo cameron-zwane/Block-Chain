@@ -8,7 +8,7 @@ import {
   transferAsset,
   getAssetHistory,
   getAssetsByOwner,
-} from '../models/assetModel.ts';
+} from '../models/assetModel.js';
 
 export const createAssetController = (req, res) => {
   const asset = createAsset(req.body);

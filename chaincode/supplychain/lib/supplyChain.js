@@ -1,7 +1,6 @@
 'use strict';
 
 const { Contract } = require('fabric-contract-api');
-const { ClientIdentity } = require('fabric-shim');
 
 const AssetProperties = Object.freeze({
     ORIGIN: 0,
@@ -92,8 +91,7 @@ class AssetTransfer extends Contract {
     }
 
     async TestMethod(ctx) {
-        id = new ClientIdentity(ctx.stub);
-        console.info(id.getID());
+        return JSON.stringify(ctx.clientIdentity.getMSPID())
     }
 
     // CreateAsset issues a new asset to the world state with given details.
@@ -115,12 +113,12 @@ class AssetTransfer extends Contract {
         currentOwner = JSON.parse(currentOwner);
         transactionHistory = JSON.parse(transactionHistory);
         if (
-            this.HasCorrectKeys(origin, AssetProperties.ORIGIN) 
-            && this.HasCorrectKeys(processing, AssetProperties.PROCESSING)
-            && this.HasCorrectKeys(packaging, AssetProperties.PACKAGING)
-            && this.HasCorrectKeys(shipment, AssetProperties.SHIPMENT)
-            && this.HasCorrectKeys(currentOwner, AssetProperties.CURRENTOWNER)
-            && this.HasCorrectKeys(transactionHistory, AssetProperties.TRANSACTIONHISTORY)
+            await this.HasCorrectKeys(origin, AssetProperties.ORIGIN) 
+            && await this.HasCorrectKeys(processing, AssetProperties.PROCESSING)
+            && await this.HasCorrectKeys(packaging, AssetProperties.PACKAGING)
+            && await this.HasCorrectKeys(shipment, AssetProperties.SHIPMENT)
+            && await this.HasCorrectKeys(currentOwner, AssetProperties.CURRENTOWNER)
+            && await this.HasCorrectKeys(transactionHistory, AssetProperties.TRANSACTIONHISTORY)
         ) {
             const asset = {
                 ItemID: itemID,
@@ -173,12 +171,12 @@ class AssetTransfer extends Contract {
         currentOwner = JSON.parse(currentOwner);
         transactionHistory = JSON.parse(transactionHistory);
         if (
-            this.HasCorrectKeys(origin, AssetProperties.ORIGIN) 
-            && this.HasCorrectKeys(processing, AssetProperties.PROCESSING)
-            && this.HasCorrectKeys(packaging, AssetProperties.PACKAGING)
-            && this.HasCorrectKeys(shipment, AssetProperties.SHIPMENT)
-            && this.HasCorrectKeys(currentOwner, AssetProperties.CURRENTOWNER)
-            && this.HasCorrectKeys(transactionHistory, AssetProperties.TRANSACTIONHISTORY)
+            await this.HasCorrectKeys(origin, AssetProperties.ORIGIN) 
+            && await this.HasCorrectKeys(processing, AssetProperties.PROCESSING)
+            && await this.HasCorrectKeys(packaging, AssetProperties.PACKAGING)
+            && await this.HasCorrectKeys(shipment, AssetProperties.SHIPMENT)
+            && await this.HasCorrectKeys(currentOwner, AssetProperties.CURRENTOWNER)
+            && await this.HasCorrectKeys(transactionHistory, AssetProperties.TRANSACTIONHISTORY)
         ) {
             // overwriting original asset with new asset
             const updatedAsset = {
@@ -196,6 +194,113 @@ class AssetTransfer extends Contract {
         else { 
             throw new Error(`Incorrect parameter structure.`);
         }
+    }
+
+    //Moves asset from its origin to the processor
+    async ProcessAsset(
+        ctx, 
+        itemID, 
+        processor,
+        processingLocation,
+        processDate,
+        processType,
+        transactionID
+    ) {
+        const assetString = await this.ReadAsset(ctx, itemID);
+        const asset = JSON.parse(assetString);
+        asset.Processing = {
+            Processor: processor,
+            ProcessingLocation: processingLocation,
+            ProcessDate: processDate,
+            ProcessType: processType
+        };
+        const newOwner = JSON.stringify({
+            Entity: processor,
+            OwnerLocation: processingLocation,
+            ReceivedDate: processDate
+        });
+        await this.TransferAsset(ctx, itemID, newOwner, transactionID, "Harvested and sent for processing");
+        return ctx.stub.putState(itemID, Buffer.from(JSON.stringify(asset)));
+    }
+
+    //Moves asset from its processor to the packager
+    async PackageAsset(
+        ctx, 
+        itemID, 
+        packager,
+        packagingLocation,
+        packageDate,
+        packageType,
+        transactionID
+    ) {
+        const assetString = await this.ReadAsset(ctx, itemID);
+        const asset = JSON.parse(assetString);
+        asset.Packaging = {
+            Packager: packager,
+            PackagingLocation: packagingLocation,
+            PackageDate: packageDate,
+            PackageType: packageType
+        };
+        const newOwner = JSON.stringify({
+            Entity: packager,
+            OwnerLocation: packagingLocation,
+            ReceivedDate: packageDate
+        });
+        await this.TransferAsset(ctx, itemID, newOwner, transactionID, "Processed and sent for packaging");
+        return ctx.stub.putState(itemID, Buffer.from(JSON.stringify(asset)));
+    }
+
+    //Moves asset from its packager to the shipper
+    async ShipAsset(
+        ctx, 
+        itemID, 
+        shipper,
+        shipmentID,
+        destination,
+        departureDate,
+        status,
+        transactionID
+    ) {
+        const assetString = await this.ReadAsset(ctx, itemID);
+        const asset = JSON.parse(assetString);
+        asset.Shipment = {
+            Shipper: shipper,
+            ShipmentID: shipmentID,
+            Origin: asset.CurrentOwner.OwnerLocation,
+            Destination: destination,
+            DepartureDate: departureDate,
+            ArrivalDate: "",
+            Status: status
+        };
+        const newOwner = JSON.stringify({
+            Entity: shipper,
+            OwnerLocation: shipper,
+            ReceivedDate: departureDate
+        });
+        await this.TransferAsset(ctx, itemID, newOwner, transactionID, "Packaged and sent for shipment");
+        return ctx.stub.putState(itemID, Buffer.from(JSON.stringify(asset)));
+    }
+
+    //Moves asset from its shipper to its destination
+    async CompleteShipment(
+        ctx, 
+        itemID, 
+        recipient,
+        arrivalDate,
+        status,
+        transactionID
+    ) {
+        const assetString = await this.ReadAsset(ctx, itemID);
+        const asset = JSON.parse(assetString);
+        asset.Shipment.ArrivalDate = arrivalDate;
+        asset.Shipment.Status =  status;
+        const newOwner = JSON.stringify({
+            Entity: recipient,
+            OwnerLocation: asset.Shipment.Destination,
+            ReceivedDate: arrivalDate
+        });
+        await this.TransferAsset(ctx, itemID, newOwner, transactionID, "Shipped and received");
+        return ctx.stub.putState(itemID, Buffer.from(JSON.stringify(asset)));
     }
 
     // DeleteAsset deletes an given asset from the world state.
@@ -217,23 +322,20 @@ class AssetTransfer extends Contract {
     async TransferAsset(
         ctx, 
         itemID, 
-        newOwner = {Entity, OwnerLocation, ReceivedDate},
-        transferTransaction = {TransactionID, Details}
+        newOwner,
+        transactionID,
+        details,
     ) {
-        const exists = await this.AssetExists(ctx, itemID);
-        if (!exists) {
-            throw new Error(`The asset ${itemID} does not exist`);
-        }
         newOwner = JSON.parse(newOwner);
-        if (this.HasCorrectKeys(newOwner)) {
+        if (await this.HasCorrectKeys(newOwner)) {
             const assetString = await this.ReadAsset(ctx, itemID);
             const asset = JSON.parse(assetString);
             asset.TransactionHistory.push({
-                TransactionID: transferTransaction.TransactionID,
+                TransactionID: transactionID,
                 Timestamp: (new Date()).toISOString(),
                 From: asset.CurrentOwner.Entity,
                 To: newOwner.Entity,
-                Details: transferTransaction.Details
+                Details: details
             });
             asset.CurrentOwner = newOwner;
             return ctx.stub.putState(itemID, Buffer.from(JSON.stringify(asset)));

@@ -327,7 +327,7 @@ export const getAssetHistory = async (assetId) => {
     const network = await gateway.getNetwork('ws-supplier-channel');
     const contract = network.getContract('ws-supplier-cc');
   
-    const result = await contract.evaluateTransaction('GetAssetHistory', id);
+    const result = await contract.evaluateTransaction('GetAssetHistory', assetId);
 
     // Parse the result to get an array of asset history records
     const historyRecords = JSON.parse(result.toString());

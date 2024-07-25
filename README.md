@@ -49,7 +49,7 @@ public blockchains rely on.
 The typical flow of a consensus is as follows:
 ![concept-flow](images/concept-flow.png)
 
-1. Client proposes a transaction, signs the certificate with the certificate and sends the transaction
+1. Client proposes a transaction, signs the transaction with the certificate and sends the transaction
 to a set of pre-defined endorsing peers on a channel.
 2. Each peer verifies the identity and simulates the transaction if verification passes. The peer will then
 sign the endorsement with their own certificate and return it to the client.
@@ -61,6 +61,8 @@ to make sure the block is actually from the correct sources with correct endorse
 Note: The client receives the subscribed events.
 
 ## Implementation
+
+### Outline
 
 As mentioned before, this specific implementation features a coffee bean supply chain. There are
 four companies involved:
@@ -142,3 +144,84 @@ This is what a typical object looks like in the system:
     ]
 }
 ```
+
+### AWS Architecture
+
+AWS has a service called Amazon Managed Blockchain (AMB). The service implement a Hyperledger 
+Fabric architecture. The general flow of Hyperledger Fabric still applies in AMB.
+
+The architecture of the Coffee Bean Supply chain looks as follows:
+
+![aws-architecture](images/aws-architecture.png)
+
+
+### Functionality
+
+When it comes to what you can do in the coffee bean supply, it all boils down to CRUD.
+Each organisation in the supply chain can update their specific sections of the process, so 
+that the asset will give an accurate reading of the chain of supply that was followed. 
+
+The state is represented by the object mentioned above and CRUD operations are performed on 
+that object.
+
+In basic summary it includes the following:
+
+- Create Asset
+- Fetch Specific Asset
+- Update Asset
+- Delete Asset
+- Transfer Asset
+- Get All Asset
+- Get Asset History
+
+The EC2 Node Server has endpoints that exposes this functionality. In here the `fabric-network`
+node sdk package is used to communicate with the network.
+
+### Chaincode on the Peers
+
+Hyperledger Fabric makes use of chaincode to tell the peers how to manage assets. By default, a 
+peer won't understand what it means to 'transfer an asset', so it is up to the implementer to 
+define all of these relationships and functionality.
+
+In the Coffee Bean Supply Chain, a node chaincode/smartcontract is used to implement that logic.
+
+This is a code snippet of a chaincode:
+
+```javascript
+    // TransferAsset updates the owner field of asset with given id in the world state.
+    async TransferAsset(
+        ctx, 
+        itemID, 
+        newOwner = {Entity, OwnerLocation, ReceivedDate},
+        transferTransaction = {TransactionID, Details}
+    ) {
+        const exists = await this.AssetExists(ctx, itemID);
+        if (!exists) {
+            throw new Error(`The asset ${itemID} does not exist`);
+        }
+        newOwner = JSON.parse(newOwner);
+        if (this.HasCorrectKeys(newOwner)) {
+            const assetString = await this.ReadAsset(ctx, itemID);
+            const asset = JSON.parse(assetString);
+            asset.TransactionHistory.push({
+                TransactionID: transferTransaction.TransactionID,
+                Timestamp: (new Date()).toISOString(),
+                From: asset.CurrentOwner.Entity,
+                To: newOwner.Entity,
+                Details: transferTransaction.Details
+            });
+            asset.CurrentOwner = newOwner;
+            return ctx.stub.putState(itemID, Buffer.from(JSON.stringify(asset)));
+        }
+        else { 
+            throw new Error(`Incorrect parameter structure.`);
+        }
+    }
+```
+
+## Further Readings
+
+For further readings and explanations, you can refer to the resources below:
+
+- [Hyperledger Fabric Documentation](https://hyperledger-fabric.readthedocs.io/)
+- [Telusko Summary Video](https://www.youtube.com/watch?v=rwKPXHUlmks)

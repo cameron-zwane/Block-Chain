@@ -1,11 +1,11 @@
 import { Gateway, Wallets } from 'fabric-network';
-import { SecretsManager } from 'aws-sdk';
+// import { SecretsManager } from 'aws-sdk';
 
-const certContent = SecretsManager.getSecretValue({
-  SecretId: certContent,
-});
+// const certContent = SecretsManager.getSecretValue({
+//   SecretId: certContent,
+// });
 
-const privateKey = SecretsManager.getSecretValue({ SecretId: 'PRIVATE_KEY' });
+//const privateKey = SecretsManager.getSecretValue({ SecretId: 'PRIVATE_KEY' });
 
 const ccp = {
   name: 'Network',

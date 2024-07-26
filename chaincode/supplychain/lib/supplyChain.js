@@ -84,146 +84,6 @@ class AssetTransfer extends Contract {
         );
     }
 
-    // SeedData performs some transactions on the data from InitLedger 
-    // -c '{"function":"SeedData","Args":[]}'
-    async SeedData(ctx) {
-        // process seed assets
-        await this.ProcessAsset(
-            ctx, 
-            "00000001", 
-            "Ethiopian Coffee Processing Ltd.",
-            "Addis Ababa, Ethiopia",
-            "2024-04-20",
-            "Wet Processing",
-            "TXN00001"
-        );
-        await this.ProcessAsset(
-            ctx, 
-            "00000002", 
-            "Ethiopian Coffee Processing Ltd.",
-            "Addis Ababa, Ethiopia",
-            "2024-04-20",
-            "Wet Processing",
-            "TXN00002"
-        );
-        await this.ProcessAsset(
-            ctx, 
-            "00000003", 
-            "Ethiopian Coffee Processing Ltd.",
-            "Addis Ababa, Ethiopia",
-            "2024-04-21",
-            "Dry Processing",
-            "TXN00003"
-        );
-        await this.ProcessAsset(
-            ctx, 
-            "00000004", 
-            "Ethiopian Coffee Processing Ltd.",
-            "Addis Ababa, Ethiopia",
-            "2024-04-24",
-            "Wet Processing",
-            "TXN00004"
-        );
-        await this.ProcessAsset(
-            ctx, 
-            "00000005", 
-            "Ethiopian Coffee Processing Ltd.",
-            "Addis Ababa, Ethiopia",
-            "2024-04-24",
-            "Wet Processing",
-            "TXN00005"
-        );
-    
-        //package seed assets
-        await this.PackageAsset(
-            ctx, 
-            "00000001", 
-            "Global Coffee Packers Inc.",
-            "Nairobi, Kenya",
-            "2024-04-25",
-            "Eco-friendly Bags",
-            "TXN00006"
-        );
-        await this.PackageAsset(
-            ctx, 
-            "00000002", 
-            "Global Coffee Packers Inc.",
-            "Nairobi, Kenya",
-            "2024-04-25",
-            "Eco-friendly Bags",
-            "TXN00007"
-        );
-        await this.PackageAsset(
-            ctx, 
-            "00000004", 
-            "Global Coffee Packers Inc.",
-            "Nairobi, Kenya",
-            "2024-04-26",
-            "Plastic Bags",
-            "TXN00008"
-        );
-        await this.PackageAsset(
-            ctx, 
-            "00000005", 
-            "Global Coffee Packers Inc.",
-            "Nairobi, Kenya",
-            "2024-04-26",
-            "Plastic Bags",
-            "TXN00009"
-        );
-    
-        //ship seed assets
-        await this.ShipAsset(
-            ctx, 
-            "00000001", 
-            "International Shippers Co.",
-            "SHIP000000301",
-            "New York, USA",
-            "2024-05-01",
-            "In Transit",
-            "TXN00010"
-        );
-        await this.ShipAsset(
-            ctx, 
-            "00000002", 
-            "International Shippers Co.",
-            "SHIP000000302",
-            "New York, USA",
-            "2024-05-02",
-            "In Transit",
-            "TXN00011"
-        );
-        await this.ShipAsset(
-            ctx, 
-            "00000004", 
-            "International Shippers Co.",
-            "SHIP000000303",
-            "New York, USA",
-            "2024-05-04",
-            "In Transit",
-            "TXN00012"
-        );
-    
-        //complete seed shipments
-        await this.CompleteShipment(
-            ctx, 
-            "00000001", 
-            "Coffee Distributors USA",
-            "2024-05-10",
-            "Shipped",
-            "TXN00013"
-        );
-        await this.CompleteShipment(
-            ctx, 
-            "00000002", 
-            "Coffee Distributors USA",
-            "2024-05-12",
-            "Shipped",
-            "TXN00014"
-        );
-    }
-
-
     // CreateAsset issues a new asset to the world state with given details.
     // -c '{"function":"CreateAsset","Args":["00000001","Micelsoft Coffee Beans","{\"Farm\":\"Green Valley Farm\",\"OriginLocation\":\"Ethiopia\",\"Certifications\":[\"Organic\",\"Fair Trade\"],\"HarvestDate\": \"2024-04-15\"}","{\"Processor\":\"\",\"ProcessingLocation\":\"\",\"ProcessDate\":\"\",\"ProcessType\":\"\"}","{\"Packager\":\"\",\"PackagingLocation\":\"\",\"PackageDate\":\"\",\"PackageType\":\"\"}","{\"Shipper\":\"\",\"ShipmentID\":\"\",\"Origin\":\"\",\"Destination\":\"\",\"DepartureDate\":\"\",\"ArrivalDate\": \"\",\"Status\":\"\"}","{\"Entity\":\"Green Valley Farm\",\"OwnerLocation\":\"Ethiopia\",\"ReceivedDate\":\"2024-04-15\"}","[]"]}'
     async CreateAsset(
@@ -244,12 +104,12 @@ class AssetTransfer extends Contract {
         currentOwner = JSON.parse(currentOwner);
         transactionHistory = JSON.parse(transactionHistory);
         if (
-            await this.#HasCorrectKeys(origin, AssetProperties.ORIGIN) 
-            && await this.#HasCorrectKeys(processing, AssetProperties.PROCESSING)
-            && await this.#HasCorrectKeys(packaging, AssetProperties.PACKAGING)
-            && await this.#HasCorrectKeys(shipment, AssetProperties.SHIPMENT)
-            && await this.#HasCorrectKeys(currentOwner, AssetProperties.CURRENTOWNER)
-            && await this.#HasCorrectKeys(transactionHistory, AssetProperties.TRANSACTIONHISTORY)
+            await this.HasCorrectKeys(origin, AssetProperties.ORIGIN) 
+            && await this.HasCorrectKeys(processing, AssetProperties.PROCESSING)
+            && await this.HasCorrectKeys(packaging, AssetProperties.PACKAGING)
+            && await this.HasCorrectKeys(shipment, AssetProperties.SHIPMENT)
+            && await this.HasCorrectKeys(currentOwner, AssetProperties.CURRENTOWNER)
+            && await this.HasCorrectKeys(transactionHistory, AssetProperties.TRANSACTIONHISTORY)
         ) {
             const asset = {
                 ItemID: itemID,
@@ -306,12 +166,12 @@ class AssetTransfer extends Contract {
         currentOwner = JSON.parse(currentOwner);
         transactionHistory = JSON.parse(transactionHistory);
         if (
-            await this.#HasCorrectKeys(origin, AssetProperties.ORIGIN) 
-            && await this.#HasCorrectKeys(processing, AssetProperties.PROCESSING)
-            && await this.#HasCorrectKeys(packaging, AssetProperties.PACKAGING)
-            && await this.#HasCorrectKeys(shipment, AssetProperties.SHIPMENT)
-            && await this.#HasCorrectKeys(currentOwner, AssetProperties.CURRENTOWNER)
-            && await this.#HasCorrectKeys(transactionHistory, AssetProperties.TRANSACTIONHISTORY)
+            await this.HasCorrectKeys(origin, AssetProperties.ORIGIN) 
+            && await this.HasCorrectKeys(processing, AssetProperties.PROCESSING)
+            && await this.HasCorrectKeys(packaging, AssetProperties.PACKAGING)
+            && await this.HasCorrectKeys(shipment, AssetProperties.SHIPMENT)
+            && await this.HasCorrectKeys(currentOwner, AssetProperties.CURRENTOWNER)
+            && await this.HasCorrectKeys(transactionHistory, AssetProperties.TRANSACTIONHISTORY)
         ) {
             // overwriting original asset with new asset
             const updatedAsset = {
@@ -342,20 +202,18 @@ class AssetTransfer extends Contract {
         processType,
         transactionID
     ) {
-        const assetString = await this.ReadAsset(ctx, itemID);
-        const asset = JSON.parse(assetString);
+        const newOwner = JSON.stringify({
+            Entity: processor,
+            OwnerLocation: processingLocation,
+            ReceivedDate: processDate
+        });
+        const asset = await this.TransferAsset(ctx, itemID, newOwner, transactionID, "Harvested and sent for processing", true);
         asset.Processing = {
             Processor: processor,
             ProcessingLocation: processingLocation,
             ProcessDate: processDate,
             ProcessType: processType
         };
-        const newOwner = JSON.stringify({
-            Entity: processor,
-            OwnerLocation: processingLocation,
-            ReceivedDate: processDate
-        });
-        await this.TransferAsset(ctx, itemID, newOwner, transactionID, "Harvested and sent for processing");
         return ctx.stub.putState(itemID, Buffer.from(JSON.stringify(asset)));
     }
 
@@ -370,20 +228,18 @@ class AssetTransfer extends Contract {
         packageType,
         transactionID
     ) {
-        const assetString = await this.ReadAsset(ctx, itemID);
-        const asset = JSON.parse(assetString);
+        const newOwner = JSON.stringify({
+            Entity: packager,
+            OwnerLocation: packagingLocation,
+            ReceivedDate: packageDate
+        }); 
+        const asset = await this.TransferAsset(ctx, itemID, newOwner, transactionID, "Processed and sent for packaging", true);
         asset.Packaging = {
             Packager: packager,
             PackagingLocation: packagingLocation,
             PackageDate: packageDate,
             PackageType: packageType
         };
-        const newOwner = JSON.stringify({
-            Entity: packager,
-            OwnerLocation: packagingLocation,
-            ReceivedDate: packageDate
-        });
-        await this.TransferAsset(ctx, itemID, newOwner, transactionID, "Processed and sent for packaging");
         return ctx.stub.putState(itemID, Buffer.from(JSON.stringify(asset)));
     }
 
@@ -399,8 +255,12 @@ class AssetTransfer extends Contract {
         status,
         transactionID
     ) {
-        const assetString = await this.ReadAsset(ctx, itemID);
-        const asset = JSON.parse(assetString);
+        const newOwner = JSON.stringify({
+            Entity: shipper,
+            OwnerLocation: shipper,
+            ReceivedDate: departureDate
+        });
+        const asset = await this.TransferAsset(ctx, itemID, newOwner, transactionID, "Packaged and sent for shipment", true);
         asset.Shipment = {
             Shipper: shipper,
             ShipmentID: shipmentID,
@@ -410,12 +270,6 @@ class AssetTransfer extends Contract {
             ArrivalDate: "",
             Status: status
         };
-        const newOwner = JSON.stringify({
-            Entity: shipper,
-            OwnerLocation: shipper,
-            ReceivedDate: departureDate
-        });
-        await this.TransferAsset(ctx, itemID, newOwner, transactionID, "Packaged and sent for shipment");
         return ctx.stub.putState(itemID, Buffer.from(JSON.stringify(asset)));
     }
 
@@ -429,16 +283,14 @@ class AssetTransfer extends Contract {
         status,
         transactionID
     ) {
-        const assetString = await this.ReadAsset(ctx, itemID);
-        const asset = JSON.parse(assetString);
-        asset.Shipment.ArrivalDate = arrivalDate;
-        asset.Shipment.Status =  status;
         const newOwner = JSON.stringify({
             Entity: recipient,
             OwnerLocation: asset.Shipment.Destination,
             ReceivedDate: arrivalDate
         });
-        await this.TransferAsset(ctx, itemID, newOwner, transactionID, "Shipped and received");
+        const asset = await this.TransferAsset(ctx, itemID, newOwner, transactionID, "Shipped and received", true);
+        asset.Shipment.ArrivalDate = arrivalDate;
+        asset.Shipment.Status =  status;
         return ctx.stub.putState(itemID, Buffer.from(JSON.stringify(asset)));
     }
 
@@ -467,19 +319,24 @@ class AssetTransfer extends Contract {
         newOwner,
         transactionID,
         details,
+        returnAsset = false
     ) {
         newOwner = JSON.parse(newOwner);
-        if (await this.#HasCorrectKeys(newOwner, AssetProperties.CURRENTOWNER)) {
+        if (await this.HasCorrectKeys(newOwner, AssetProperties.CURRENTOWNER)) {
+            const stamp = ctx.stub.getTxTimestamp()
             const assetString = await this.ReadAsset(ctx, itemID);
             const asset = JSON.parse(assetString);
             asset.TransactionHistory.push({
                 TransactionID: transactionID,
-                Timestamp: (new Date()).toISOString(),
+                Timestamp: new Date((stamp.Seconds * 1000) + Math.round(stamp.Nanos/1000000)).toISOString(),
                 From: asset.CurrentOwner.Entity,
                 To: newOwner.Entity,
                 Details: details
             });
             asset.CurrentOwner = newOwner;
+            if (returnAsset) {
+                return asset;
+            }
             return ctx.stub.putState(itemID, Buffer.from(JSON.stringify(asset)));
         }
         else { 
@@ -489,7 +346,7 @@ class AssetTransfer extends Contract {
     }
 
     // GetAllResults returns all the results from an iterator
-    async #GetAllResults(iterator, isHistory) {
+    async GetAllResults(iterator, isHistory) {
 		const allResults = [];
 		let res = await iterator.next();
 		while (!res.done) {
@@ -526,7 +383,7 @@ class AssetTransfer extends Contract {
     // -c '{"Args":["GetAllAssets"]}' | jq
     async GetAllAssets(ctx) {
         const iterator = await ctx.stub.getStateByRange('', '');
-        const allResults = await this.#GetAllResults(iterator, false);
+        const allResults = await this.GetAllResults(iterator, false);
 
         return JSON.stringify(allResults);
     }
@@ -546,7 +403,7 @@ class AssetTransfer extends Contract {
 	}
 
     // GetQueryResultForQueryString executes the passed in query string.
-	async #GetQueryResultForQueryString(ctx, queryString) {
+	async GetQueryResultForQueryString(ctx, queryString) {
 
 		const iterator = await ctx.stub.getQueryResult(queryString);
 		const results = await this.GetAllResults(iterator, false);
@@ -562,10 +419,10 @@ class AssetTransfer extends Contract {
 		queryString.selector.DocType = 'asset';
         queryString.selector.CurrentOwner = {}
 		queryString.selector.CurrentOwner.Entity = ownerEntity;
-		return await this.#GetQueryResultForQueryString(ctx, JSON.stringify(queryString)); 
+		return await this.GetQueryResultForQueryString(ctx, JSON.stringify(queryString)); 
 	}
 
-    async #HasCorrectKeys(obj, propertyType) {
+    async HasCorrectKeys(obj, propertyType) {
         switch(propertyType) {
             case AssetProperties.ORIGIN:
                 return (

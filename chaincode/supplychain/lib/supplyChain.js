@@ -284,7 +284,7 @@ class AssetTransfer extends Contract {
         transactionID
     ) {
         const assetString = await this.ReadAsset(ctx, itemID);
-        const asset = JSON.parse(assetString);
+        let asset = JSON.parse(assetString);
         const newOwner = JSON.stringify({
             Entity: recipient,
             OwnerLocation: asset.Shipment.Destination,

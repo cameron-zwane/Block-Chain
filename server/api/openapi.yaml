@@ -1,0 +1,402 @@
+openapi: 3.0.1
+info:
+  title: Hyperledger Fabric API
+  description: API for managing assets in Hyperledger Fabric
+  version: 1.0.0
+servers:
+- url: http://localhost:3000
+paths:
+  /assets:
+    post:
+      summary: Create a new asset
+      operationId: assetsPOST
+      requestBody:
+        description: Asset
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Asset'
+        required: true
+      responses:
+        "201":
+          description: Asset created successfully
+      x-swagger-router-controller: Default
+  /assets/{AssetId}:
+    get:
+      summary: Retrieve an asset's information by ID
+      operationId: assetsAssetIdGET
+      parameters:
+      - name: AssetId
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Asset retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Asset'
+      x-swagger-router-controller: Default
+    put:
+      summary: Update an existing asset
+      operationId: assetsAssetIdPUT
+      parameters:
+      - name: AssetId
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      requestBody:
+        description: Updated asset details
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Asset'
+        required: true
+      responses:
+        "200":
+          description: Asset updated successfully
+      x-swagger-router-controller: Default
+    delete:
+      summary: Delete an asset by ID
+      operationId: assetsAssetIdDELETE
+      parameters:
+      - name: AssetId
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "204":
+          description: Asset deleted successfully
+      x-swagger-router-controller: Default
+  /assets/{AssetId}/exists:
+    get:
+      summary: Check if an asset exists by ID
+      operationId: assetsAssetIdExistsGET
+      parameters:
+      - name: AssetId
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Asset existence checked successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200'
+      x-swagger-router-controller: Default
+  /assets/{assetId}/transfer:
+    post:
+      summary: Transfer ownership of an asset
+      operationId: assetsAssetIdTransferPOST
+      parameters:
+      - name: assetId
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      requestBody:
+        description: New owner details
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Transfer'
+        required: true
+      responses:
+        "200":
+          description: Asset transferred successfully
+      x-swagger-router-controller: Default
+  /assets/all:
+    get:
+      summary: Get all assets in the ledger
+      operationId: assetsAllGET
+      responses:
+        "200":
+          description: Assets retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Transfer'
+                x-content-type: application/json
+      x-swagger-router-controller: Default
+  /assets/{assetId}/history:
+    get:
+      summary: Get the history of a specific asset
+      operationId: assetsAssetIdHistoryGET
+      parameters:
+      - name: assetId
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Asset history retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TransactionHistory'
+                x-content-type: application/json
+      x-swagger-router-controller: Default
+  /owners/{OwnerId}/assets:
+    get:
+      summary: Get all assets owned by a specific entity
+      operationId: ownersOwnerIdAssetsGET
+      parameters:
+      - name: OwnerId
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Assets retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Asset'
+                x-content-type: application/json
+      x-swagger-router-controller: Default
+components:
+  schemas:
+    Asset:
+      type: object
+      properties:
+        ItemID:
+          type: string
+        ItemName:
+          type: string
+        Origin:
+          $ref: '#/components/schemas/Asset_Origin'
+        Processing:
+          $ref: '#/components/schemas/Asset_Processing'
+        Packaging:
+          $ref: '#/components/schemas/Asset_Packaging'
+        Shipment:
+          $ref: '#/components/schemas/Asset_Shipment'
+        CurrentOwner:
+          $ref: '#/components/schemas/Asset_CurrentOwner'
+        TransactionHistory:
+          type: array
+          items:
+            $ref: '#/components/schemas/Asset_TransactionHistory'
+      example:
+        Origin:
+          OriginLocation: OriginLocation
+          Certifications:
+          - Certifications
+          - Certifications
+          Farm: Farm
+          HarvestDate: 2000-01-23
+        CurrentOwner:
+          Entity: Entity
+          ReceivedDate: 2000-01-23
+          OwnerLocation: OwnerLocation
+        TransactionHistory:
+        - Details: Details
+          From: From
+          To: To
+          Timestamp: 2000-01-23T04:56:07.000+00:00
+          TransactionID: TransactionID
+        - Details: Details
+          From: From
+          To: To
+          Timestamp: 2000-01-23T04:56:07.000+00:00
+          TransactionID: TransactionID
+        Packaging:
+          Packager: Packager
+          PackageType: PackageType
+          PackageDate: 2000-01-23
+          PackagingLocation: PackagingLocation
+        ItemName: ItemName
+        Shipment:
+          ShipmentID: ShipmentID
+          Origin: Origin
+          Status: Status
+          Destination: Destination
+          ArrivalDate: 2000-01-23
+          Shipper: Shipper
+          DepartureDate: 2000-01-23
+        ItemID: ItemID
+        Processing:
+          ProcessType: ProcessType
+          Processor: Processor
+          ProcessingLocation: ProcessingLocation
+          ProcessDate: 2000-01-23T04:56:07.000+00:00
+    Transfer:
+      type: object
+      properties:
+        NewOwner:
+          $ref: '#/components/schemas/Asset_CurrentOwner'
+        TransferTransaction:
+          $ref: '#/components/schemas/Transfer_TransferTransaction'
+      example:
+        NewOwner:
+          Entity: Entity
+          ReceivedDate: 2000-01-23
+          OwnerLocation: OwnerLocation
+        TransferTransaction:
+          Details: Details
+          TransactionID: TransactionID
+    TransactionHistory:
+      type: array
+      items:
+        $ref: '#/components/schemas/Asset_TransactionHistory'
+    inline_response_200:
+      type: object
+      properties:
+        exists:
+          type: boolean
+      example:
+        exists: true
+    Asset_Origin:
+      type: object
+      properties:
+        Farm:
+          type: string
+        OriginLocation:
+          type: string
+        Certifications:
+          type: array
+          items:
+            type: string
+        HarvestDate:
+          type: string
+          format: date
+      example:
+        OriginLocation: OriginLocation
+        Certifications:
+        - Certifications
+        - Certifications
+        Farm: Farm
+        HarvestDate: 2000-01-23
+    Asset_Processing:
+      type: object
+      properties:
+        Processor:
+          type: string
+        ProcessingLocation:
+          type: string
+        ProcessDate:
+          type: string
+          format: date-time
+        ProcessType:
+          type: string
+      example:
+        ProcessType: ProcessType
+        Processor: Processor
+        ProcessingLocation: ProcessingLocation
+        ProcessDate: 2000-01-23T04:56:07.000+00:00
+    Asset_Packaging:
+      type: object
+      properties:
+        Packager:
+          type: string
+        PackagingLocation:
+          type: string
+        PackageDate:
+          type: string
+          format: date
+        PackageType:
+          type: string
+      example:
+        Packager: Packager
+        PackageType: PackageType
+        PackageDate: 2000-01-23
+        PackagingLocation: PackagingLocation
+    Asset_Shipment:
+      type: object
+      properties:
+        Shipper:
+          type: string
+        ShipmentID:
+          type: string
+        Origin:
+          type: string
+        Destination:
+          type: string
+        DepartureDate:
+          type: string
+          format: date
+        ArrivalDate:
+          type: string
+          format: date
+        Status:
+          type: string
+      example:
+        ShipmentID: ShipmentID
+        Origin: Origin
+        Status: Status
+        Destination: Destination
+        ArrivalDate: 2000-01-23
+        Shipper: Shipper
+        DepartureDate: 2000-01-23
+    Asset_CurrentOwner:
+      type: object
+      properties:
+        Entity:
+          type: string
+        OwnerLocation:
+          type: string
+        ReceivedDate:
+          type: string
+          format: date
+      example:
+        Entity: Entity
+        ReceivedDate: 2000-01-23
+        OwnerLocation: OwnerLocation
+    Asset_TransactionHistory:
+      type: object
+      properties:
+        TransactionID:
+          type: string
+        Timestamp:
+          type: string
+          format: date-time
+        From:
+          type: string
+        To:
+          type: string
+        Details:
+          type: string
+      example:
+        Details: Details
+        From: From
+        To: To
+        Timestamp: 2000-01-23T04:56:07.000+00:00
+        TransactionID: TransactionID
+    Transfer_TransferTransaction:
+      type: object
+      properties:
+        TransactionID:
+          type: string
+        Details:
+          type: string
+      example:
+        Details: Details
+        TransactionID: TransactionID

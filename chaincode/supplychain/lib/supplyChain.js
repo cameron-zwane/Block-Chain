@@ -12,258 +12,81 @@ const AssetProperties = Object.freeze({
 });
 
 class AssetTransfer extends Contract {
-
+    // InitLedger adds some seed assets to the ledger 
+    // -c '{"function":"InitLedger","Args":[]}'
     async InitLedger(ctx) {
-        const assets = [
-            {
-                ItemID: "00000001",
-                ItemName: "Organic Fair-Trade Coffee Beans",
-                Origin: {
-                    Farm: "Green Valley Farm",
-                    OriginLocation: "Ethiopia",
-                    Certifications: [
-                        "Organic", 
-                        "Fair Trade"
-                    ],
-                    HarvestDate: "2024-04-15"
-                },
-                Processing: {
-                    Processor: "",
-                    ProcessingLocation: "",
-                    ProcessDate: "",
-                    ProcessType: ""
-                },
-                Packaging: {
-                    Packager: "",
-                    PackagingLocation: "",
-                    PackageDate: "",
-                    PackageType: ""
-                },
-                Shipment: {
-                    Shipper: "",
-                    ShipmentID: "",
-                    Origin: "",
-                    Destination: "",
-                    DepartureDate: "",
-                    ArrivalDate: "",
-                    Status: ""
-                },
-                CurrentOwner: {
-                    Entity: "Green Valley Farm",
-                    OwnerLocation: "Ethiopia",
-                    ReceivedDate: "2024-04-15"
-                },
-                TransactionHistory: []
-            },
-            {
-                ItemID: "00000002",
-                ItemName: "Organic Fair-Trade Arabica Coffee Beans",
-                Origin: {
-                    Farm: "Green Valley Farm",
-                    OriginLocation: "Ethiopia",
-                    Certifications: [
-                        "Organic",
-                        "Fair Trade"
-                    ],
-                    HarvestDate: "2024-04-15"
-                },
-                Processing: {
-                    Processor: "",
-                    ProcessingLocation: "",
-                    ProcessDate: "",
-                    ProcessType: ""
-                },
-                Packaging: {
-                    Packager: "",
-                    PackagingLocation: "",
-                    PackageDate: "",
-                    PackageType: ""
-                },
-                Shipment: {
-                    Shipper: "",
-                    ShipmentID: "",
-                    Origin: "",
-                    Destination: "",
-                    DepartureDate: "",
-                    ArrivalDate: "",
-                    Status: ""
-                },
-                CurrentOwner: {
-                    Entity: "Green Valley Farm",
-                    OwnerLocation: "Ethiopia",
-                    ReceivedDate: "2024-04-15"
-                },
-                TransactionHistory: []
-            },
-            {
-                ItemID: "00000003",
-                ItemName: "Organic Fair-Trade Robusta Coffee Beans",
-                Origin: {
-                    Farm: "Green Valley Farm",
-                    OriginLocation: "Ethiopia",
-                    Certifications: [
-                        "Organic",
-                        "Fair Trade"
-                    ],
-                    HarvestDate: "2024-04-15"
-                },
-                Processing: {
-                    Processor: "",
-                    ProcessingLocation: "",
-                    ProcessDate: "",
-                    ProcessType: ""
-                },
-                Packaging: {
-                    Packager: "",
-                    PackagingLocation: "",
-                    PackageDate: "",
-                    PackageType: ""
-                },
-                Shipment: {
-                    Shipper: "",
-                    ShipmentID: "",
-                    Origin: "",
-                    Destination: "",
-                    DepartureDate: "",
-                    ArrivalDate: "",
-                    Status: ""
-                },
-                CurrentOwner: {
-                    Entity: "Green Valley Farm",
-                    OwnerLocation: "Ethiopia",
-                    ReceivedDate: "2024-04-15"
-                },
-                TransactionHistory: []
-            },
-            {
-                ItemID: "00000004",
-                ItemName: "Fair-Trade Java Coffee Beans",
-                Origin: {
-                    Farm: "Green Valley Farm",
-                    OriginLocation: "Ethiopia",
-                    Certifications: [
-                        "Organic",
-                        "Fair Trade"
-                    ],
-                    HarvestDate: "2024-04-10"
-                },
-                Processing: {
-                    Processor: "",
-                    ProcessingLocation: "",
-                    ProcessDate: "",
-                    ProcessType: ""
-                },
-                Packaging: {
-                    Packager: "",
-                    PackagingLocation: "",
-                    PackageDate: "",
-                    PackageType: ""
-                },
-                Shipment: {
-                    Shipper: "",
-                    ShipmentID: "",
-                    Origin: "",
-                    Destination: "",
-                    DepartureDate: "",
-                    ArrivalDate: "",
-                    Status: ""
-                },
-                CurrentOwner: {
-                    Entity: "Green Valley Farm",
-                    OwnerLocation: "Ethiopia",
-                    ReceivedDate: "2024-04-10"
-                },
-                TransactionHistory: []
-            },
-            {
-                ItemID: "00000005",
-                ItemName: "Liberica Coffee Beans",
-                Origin: {
-                    Farm: "Green Valley Farm",
-                    OriginLocation: "Ethiopia",
-                    Certifications: [
-                        "Organic",
-                        "Fair Trade"
-                    ],
-                    HarvestDate: "2024-04-11"
-                },
-                Processing: {
-                    Processor: "",
-                    ProcessingLocation: "",
-                    ProcessDate: "",
-                    ProcessType: ""
-                },
-                Packaging: {
-                    Packager: "",
-                    PackagingLocation: "",
-                    PackageDate: "",
-                    PackageType: ""
-                },
-                Shipment: {
-                    Shipper: "",
-                    ShipmentID: "",
-                    Origin: "",
-                    Destination: "",
-                    DepartureDate: "",
-                    ArrivalDate: "",
-                    Status: ""
-                },
-                CurrentOwner: {
-                    Entity: "Green Valley Farm",
-                    OwnerLocation: "Ethiopia",
-                    ReceivedDate: "2024-04-11"
-                },
-                TransactionHistory: []
-            },
-            {
-                ItemID: "00000006",
-                ItemName: "Organic Fair-Trade Excelsa Coffee Beans",
-                Origin: {
-                    Farm: "Green Valley Farm",
-                    OriginLocation: "Ethiopia",
-                    Certifications: [
-                        "Organic",
-                        "Fair Trade"
-                    ],
-                    HarvestDate: "2024-07-23"
-                },
-                Processing: {
-                    Processor: "",
-                    ProcessingLocation: "",
-                    ProcessDate: "",
-                    ProcessType: ""
-                },
-                Packaging: {
-                    Packager: "",
-                    PackagingLocation: "",
-                    PackageDate: "",
-                    PackageType: ""
-                },
-                Shipment: {
-                    Shipper: "",
-                    ShipmentID: "",
-                    Origin: "",
-                    Destination: "",
-                    DepartureDate: "",
-                    ArrivalDate: "",
-                    Status: ""
-                },
-                CurrentOwner: {
-                    Entity: "Green Valley Farm",
-                    OwnerLocation: "Ethiopia",
-                    ReceivedDate: "2024-07-23"
-                },
-                TransactionHistory: []
-            }
-        ];
-    
         //populate seed assets
-        for (const asset of assets) {
-            asset.DocType = 'asset';
-            await ctx.stub.putState(asset.ItemID, Buffer.from(JSON.stringify(asset)));
-            console.info(`Asset ${asset.ItemID} initialized`);
-        }
-    
+        await this.CreateAsset(
+            ctx, 
+            "00000001", 
+            "Micelsoft Coffee Beans", 
+            "{\"Farm\":\"Green Valley Farm\",\"OriginLocation\":\"Ethiopia\",\"Certifications\":[\"Organic\",\"Fair Trade\"],\"HarvestDate\": \"2024-04-15\"}",
+            "{\"Processor\":\"\",\"ProcessingLocation\":\"\",\"ProcessDate\":\"\",\"ProcessType\":\"\"}",
+            "{\"Packager\":\"\",\"PackagingLocation\":\"\",\"PackageDate\":\"\",\"PackageType\":\"\"}",
+            "{\"Shipper\":\"\",\"ShipmentID\":\"\",\"Origin\":\"\",\"Destination\":\"\",\"DepartureDate\":\"\",\"ArrivalDate\": \"\",\"Status\":\"\"}",
+            "{\"Entity\":\"Green Valley Farm\",\"OwnerLocation\":\"Ethiopia\",\"ReceivedDate\":\"2024-04-15\"}",
+            "[]"
+        );
+        await this.CreateAsset(
+            ctx, 
+            "00000002", 
+            "Arabica Coffee Beans", 
+            "{\"Farm\":\"Green Valley Farm\",\"OriginLocation\":\"Ethiopia\",\"Certifications\":[\"Organic\",\"Fair Trade\"],\"HarvestDate\": \"2024-04-15\"}",
+            "{\"Processor\":\"\",\"ProcessingLocation\":\"\",\"ProcessDate\":\"\",\"ProcessType\":\"\"}",
+            "{\"Packager\":\"\",\"PackagingLocation\":\"\",\"PackageDate\":\"\",\"PackageType\":\"\"}",
+            "{\"Shipper\":\"\",\"ShipmentID\":\"\",\"Origin\":\"\",\"Destination\":\"\",\"DepartureDate\":\"\",\"ArrivalDate\": \"\",\"Status\":\"\"}",
+            "{\"Entity\":\"Green Valley Farm\",\"OwnerLocation\":\"Ethiopia\",\"ReceivedDate\":\"2024-04-15\"}",
+            "[]"
+        );
+        await this.CreateAsset(
+            ctx, 
+            "00000003", 
+            "Robusta Coffee Beans", 
+            "{\"Farm\":\"Green Valley Farm\",\"OriginLocation\":\"Ethiopia\",\"Certifications\":[\"Organic\",\"Fair Trade\"],\"HarvestDate\": \"2024-04-16\"}",
+            "{\"Processor\":\"\",\"ProcessingLocation\":\"\",\"ProcessDate\":\"\",\"ProcessType\":\"\"}",
+            "{\"Packager\":\"\",\"PackagingLocation\":\"\",\"PackageDate\":\"\",\"PackageType\":\"\"}",
+            "{\"Shipper\":\"\",\"ShipmentID\":\"\",\"Origin\":\"\",\"Destination\":\"\",\"DepartureDate\":\"\",\"ArrivalDate\": \"\",\"Status\":\"\"}",
+            "{\"Entity\":\"Green Valley Farm\",\"OwnerLocation\":\"Ethiopia\",\"ReceivedDate\":\"2024-04-16\"}",
+            "[]"
+        );
+        await this.CreateAsset(
+            ctx, 
+            "00000004", 
+            "Java Coffee Beans", 
+            "{\"Farm\":\"Green Valley Farm\",\"OriginLocation\":\"Ethiopia\",\"Certifications\":[\"Organic\",\"Fair Trade\"],\"HarvestDate\": \"2024-04-10\"}",
+            "{\"Processor\":\"\",\"ProcessingLocation\":\"\",\"ProcessDate\":\"\",\"ProcessType\":\"\"}",
+            "{\"Packager\":\"\",\"PackagingLocation\":\"\",\"PackageDate\":\"\",\"PackageType\":\"\"}",
+            "{\"Shipper\":\"\",\"ShipmentID\":\"\",\"Origin\":\"\",\"Destination\":\"\",\"DepartureDate\":\"\",\"ArrivalDate\": \"\",\"Status\":\"\"}",
+            "{\"Entity\":\"Green Valley Farm\",\"OwnerLocation\":\"Ethiopia\",\"ReceivedDate\":\"2024-04-10\"}",
+            "[]"
+        );
+        await this.CreateAsset(
+            ctx, 
+            "00000005", 
+            "Liberica Coffee Beans", 
+            "{\"Farm\":\"Green Valley Farm\",\"OriginLocation\":\"Ethiopia\",\"Certifications\":[\"Organic\",\"Fair Trade\"],\"HarvestDate\": \"2024-04-11\"}",
+            "{\"Processor\":\"\",\"ProcessingLocation\":\"\",\"ProcessDate\":\"\",\"ProcessType\":\"\"}",
+            "{\"Packager\":\"\",\"PackagingLocation\":\"\",\"PackageDate\":\"\",\"PackageType\":\"\"}",
+            "{\"Shipper\":\"\",\"ShipmentID\":\"\",\"Origin\":\"\",\"Destination\":\"\",\"DepartureDate\":\"\",\"ArrivalDate\": \"\",\"Status\":\"\"}",
+            "{\"Entity\":\"Green Valley Farm\",\"OwnerLocation\":\"Ethiopia\",\"ReceivedDate\":\"2024-04-11\"}",
+            "[]"
+        );
+        await this.CreateAsset(
+            ctx, 
+            "00000006", 
+            "Excelsa Coffee Beans", 
+            "{\"Farm\":\"Green Valley Farm\",\"OriginLocation\":\"Ethiopia\",\"Certifications\":[\"Organic\",\"Fair Trade\"],\"HarvestDate\": \"2024-07-23\"}",
+            "{\"Processor\":\"\",\"ProcessingLocation\":\"\",\"ProcessDate\":\"\",\"ProcessType\":\"\"}",
+            "{\"Packager\":\"\",\"PackagingLocation\":\"\",\"PackageDate\":\"\",\"PackageType\":\"\"}",
+            "{\"Shipper\":\"\",\"ShipmentID\":\"\",\"Origin\":\"\",\"Destination\":\"\",\"DepartureDate\":\"\",\"ArrivalDate\": \"\",\"Status\":\"\"}",
+            "{\"Entity\":\"Green Valley Farm\",\"OwnerLocation\":\"Ethiopia\",\"ReceivedDate\":\"2024-07-23\"}",
+            "[]"
+        );
+    }
+
+    // SeedData performs some transactions on the data from InitLedger 
+    // -c '{"function":"SeedData","Args":[]}'
+    async SeedData(ctx) {
         // process seed assets
         await this.ProcessAsset(
             ctx, 
@@ -402,6 +225,7 @@ class AssetTransfer extends Contract {
 
 
     // CreateAsset issues a new asset to the world state with given details.
+    // -c '{"function":"CreateAsset","Args":["00000001","Micelsoft Coffee Beans","{\"Farm\":\"Green Valley Farm\",\"OriginLocation\":\"Ethiopia\",\"Certifications\":[\"Organic\",\"Fair Trade\"],\"HarvestDate\": \"2024-04-15\"}","{\"Processor\":\"\",\"ProcessingLocation\":\"\",\"ProcessDate\":\"\",\"ProcessType\":\"\"}","{\"Packager\":\"\",\"PackagingLocation\":\"\",\"PackageDate\":\"\",\"PackageType\":\"\"}","{\"Shipper\":\"\",\"ShipmentID\":\"\",\"Origin\":\"\",\"Destination\":\"\",\"DepartureDate\":\"\",\"ArrivalDate\": \"\",\"Status\":\"\"}","{\"Entity\":\"Green Valley Farm\",\"OwnerLocation\":\"Ethiopia\",\"ReceivedDate\":\"2024-04-15\"}","[]"]}'
     async CreateAsset(
         ctx, 
         itemID, 
@@ -420,12 +244,12 @@ class AssetTransfer extends Contract {
         currentOwner = JSON.parse(currentOwner);
         transactionHistory = JSON.parse(transactionHistory);
         if (
-            await this.HasCorrectKeys(origin, AssetProperties.ORIGIN) 
-            && await this.HasCorrectKeys(processing, AssetProperties.PROCESSING)
-            && await this.HasCorrectKeys(packaging, AssetProperties.PACKAGING)
-            && await this.HasCorrectKeys(shipment, AssetProperties.SHIPMENT)
-            && await this.HasCorrectKeys(currentOwner, AssetProperties.CURRENTOWNER)
-            && await this.HasCorrectKeys(transactionHistory, AssetProperties.TRANSACTIONHISTORY)
+            await this.#HasCorrectKeys(origin, AssetProperties.ORIGIN) 
+            && await this.#HasCorrectKeys(processing, AssetProperties.PROCESSING)
+            && await this.#HasCorrectKeys(packaging, AssetProperties.PACKAGING)
+            && await this.#HasCorrectKeys(shipment, AssetProperties.SHIPMENT)
+            && await this.#HasCorrectKeys(currentOwner, AssetProperties.CURRENTOWNER)
+            && await this.#HasCorrectKeys(transactionHistory, AssetProperties.TRANSACTIONHISTORY)
         ) {
             const asset = {
                 ItemID: itemID,
@@ -436,6 +260,7 @@ class AssetTransfer extends Contract {
                 Shipment: shipment,
                 CurrentOwner: currentOwner,
                 TransactionHistory: transactionHistory,
+                DocType: 'asset'
             };
             await ctx.stub.putState(itemID, Buffer.from(JSON.stringify(asset)));
             console.info(`Asset ${asset.ItemID} initialized`);
@@ -447,6 +272,7 @@ class AssetTransfer extends Contract {
     }
 
     // ReadAsset returns the asset stored in the world state with given id.
+    // -c '{"Args":["ReadAsset","00000001"]}' | jq
     async ReadAsset(ctx, itemID) {
         const assetJSON = await ctx.stub.getState(itemID); // get the asset from chaincode state
         if (!assetJSON || assetJSON.length === 0) {
@@ -456,6 +282,7 @@ class AssetTransfer extends Contract {
     }
 
     // // UpdateAsset updates an existing asset in the world state with provided parameters.
+    // -c '{"function":"UpdateAsset","Args":["00000001","New Micelsoft Coffee Beans","{\"Farm\":\"Green Valley Farm\",\"OriginLocation\":\"Ethiopia\",\"Certifications\":[\"Organic\",\"Fair Trade\"],\"HarvestDate\": \"2024-04-15\"}","{\"Processor\":\"\",\"ProcessingLocation\":\"\",\"ProcessDate\":\"\",\"ProcessType\":\"\"}","{\"Packager\":\"\",\"PackagingLocation\":\"\",\"PackageDate\":\"\",\"PackageType\":\"\"}","{\"Shipper\":\"\",\"ShipmentID\":\"\",\"Origin\":\"\",\"Destination\":\"\",\"DepartureDate\":\"\",\"ArrivalDate\": \"\",\"Status\":\"\"}","{\"Entity\":\"Green Valley Farm\",\"OwnerLocation\":\"Ethiopia\",\"ReceivedDate\":\"2024-04-15\"}","[]"]}'
     async UpdateAsset(
         ctx, 
         itemID, 
@@ -479,12 +306,12 @@ class AssetTransfer extends Contract {
         currentOwner = JSON.parse(currentOwner);
         transactionHistory = JSON.parse(transactionHistory);
         if (
-            await this.HasCorrectKeys(origin, AssetProperties.ORIGIN) 
-            && await this.HasCorrectKeys(processing, AssetProperties.PROCESSING)
-            && await this.HasCorrectKeys(packaging, AssetProperties.PACKAGING)
-            && await this.HasCorrectKeys(shipment, AssetProperties.SHIPMENT)
-            && await this.HasCorrectKeys(currentOwner, AssetProperties.CURRENTOWNER)
-            && await this.HasCorrectKeys(transactionHistory, AssetProperties.TRANSACTIONHISTORY)
+            await this.#HasCorrectKeys(origin, AssetProperties.ORIGIN) 
+            && await this.#HasCorrectKeys(processing, AssetProperties.PROCESSING)
+            && await this.#HasCorrectKeys(packaging, AssetProperties.PACKAGING)
+            && await this.#HasCorrectKeys(shipment, AssetProperties.SHIPMENT)
+            && await this.#HasCorrectKeys(currentOwner, AssetProperties.CURRENTOWNER)
+            && await this.#HasCorrectKeys(transactionHistory, AssetProperties.TRANSACTIONHISTORY)
         ) {
             // overwriting original asset with new asset
             const updatedAsset = {
@@ -505,6 +332,7 @@ class AssetTransfer extends Contract {
     }
 
     //Moves asset from its origin to the processor
+    // -c '{"function":"ProcessAsset","Args":["00000001","Ethiopian Coffee Processing Ltd.","Addis Ababa, Ethiopia","2024-04-20","Wet Processing","TXN12347"]}'
     async ProcessAsset(
         ctx, 
         itemID, 
@@ -532,6 +360,7 @@ class AssetTransfer extends Contract {
     }
 
     //Moves asset from its processor to the packager
+    // -c '{"function":"PackageAsset","Args":["00000001","Global Coffee Packers Inc.","Nairobi, Kenya","2024-04-25","Eco-friendly Bags","TXN12348"]}'
     async PackageAsset(
         ctx, 
         itemID, 
@@ -559,6 +388,7 @@ class AssetTransfer extends Contract {
     }
 
     //Moves asset from its packager to the shipper
+    // -c '{"function":"ShipAsset","Args":["00000001","International Shippers Co.","SHIP987654321","New York, USA","2024-05-01","In Transit","TXN12349"]}'
     async ShipAsset(
         ctx, 
         itemID, 
@@ -590,6 +420,7 @@ class AssetTransfer extends Contract {
     }
 
     //Moves asset from its shipper to its destination
+    // -c '{"function":"CompleteShipment","Args":["00000001","Coffee Distributors USA","2024-05-10","Shipped","TXN12350"]}'
     async CompleteShipment(
         ctx, 
         itemID, 
@@ -612,6 +443,7 @@ class AssetTransfer extends Contract {
     }
 
     // DeleteAsset deletes an given asset from the world state.
+    // -c '{"function":"DeleteAsset","Args":["00000001"]}'
     async DeleteAsset(ctx, itemID) {
         const exists = await this.AssetExists(ctx, itemID);
         if (!exists) {
@@ -621,12 +453,14 @@ class AssetTransfer extends Contract {
     }
 
     // AssetExists returns true when asset with given ID exists in world state.
+    // -c '{"function":"DeleteAsset","Args":["00000001"]}'
     async AssetExists(ctx, itemID) {
         const assetJSON = await ctx.stub.getState(itemID);
         return assetJSON && assetJSON.length > 0;
     }
 
     // TransferAsset updates the owner field of asset with given id in the world state.
+    // -c '{"function":"TransferAsset","Args":["00000001","{\"Entity\":\"Coffee Distributors USA\",\"OwnerLocation\":\"New York, USA\",\"ReceivedDate\":\"2024-05-10\"}","TXN12350","Shipped and received"]}'
     async TransferAsset(
         ctx, 
         itemID, 
@@ -635,7 +469,7 @@ class AssetTransfer extends Contract {
         details,
     ) {
         newOwner = JSON.parse(newOwner);
-        if (await this.HasCorrectKeys(newOwner)) {
+        if (await this.#HasCorrectKeys(newOwner, AssetProperties.CURRENTOWNER)) {
             const assetString = await this.ReadAsset(ctx, itemID);
             const asset = JSON.parse(assetString);
             asset.TransactionHistory.push({
@@ -655,7 +489,7 @@ class AssetTransfer extends Contract {
     }
 
     // GetAllResults returns all the results from an iterator
-    async GetAllResults(iterator, isHistory) {
+    async #GetAllResults(iterator, isHistory) {
 		const allResults = [];
 		let res = await iterator.next();
 		while (!res.done) {
@@ -689,14 +523,16 @@ class AssetTransfer extends Contract {
 	}
 
     // GetAllAssets returns all assets found in the world state.
+    // -c '{"Args":["GetAllAssets"]}' | jq
     async GetAllAssets(ctx) {
         const iterator = await ctx.stub.getStateByRange('', '');
-        const allResults = await this.GetAllResults(iterator, false);
+        const allResults = await this.#GetAllResults(iterator, false);
 
         return JSON.stringify(allResults);
     }
 
     // GetAssetHistory returns the chain of custody for an asset since issuance.
+    // -c '{"Args":["GetAssetHistory","00000001"]}' | jq
 	async GetAssetHistory(ctx, itemID) {
         const exists = await this.AssetExists(ctx, itemID);
         if (!exists) {
@@ -710,7 +546,7 @@ class AssetTransfer extends Contract {
 	}
 
     // GetQueryResultForQueryString executes the passed in query string.
-	async GetQueryResultForQueryString(ctx, queryString) {
+	async #GetQueryResultForQueryString(ctx, queryString) {
 
 		const iterator = await ctx.stub.getQueryResult(queryString);
 		const results = await this.GetAllResults(iterator, false);
@@ -719,16 +555,17 @@ class AssetTransfer extends Contract {
 	}
 
     // GetAssetsByOwner returns all assets owned by a specified owner.
+    // -c '{"Args":["GetAssetsByOwner","Ethiopian Coffee Processing Ltd."]}' | jq
     async GetAssetsByOwner(ctx, ownerEntity) {
 		let queryString = {};
 		queryString.selector = {};
 		queryString.selector.DocType = 'asset';
         queryString.selector.CurrentOwner = {}
 		queryString.selector.CurrentOwner.Entity = ownerEntity;
-		return await this.GetQueryResultForQueryString(ctx, JSON.stringify(queryString)); 
+		return await this.#GetQueryResultForQueryString(ctx, JSON.stringify(queryString)); 
 	}
 
-    async HasCorrectKeys(obj, propertyType) {
+    async #HasCorrectKeys(obj, propertyType) {
         switch(propertyType) {
             case AssetProperties.ORIGIN:
                 return (

@@ -323,12 +323,11 @@ class AssetTransfer extends Contract {
     ) {
         newOwner = JSON.parse(newOwner);
         if (await this.HasCorrectKeys(newOwner, AssetProperties.CURRENTOWNER)) {
-            const stamp = ctx.stub.getTxTimestamp()
             const assetString = await this.ReadAsset(ctx, itemID);
             const asset = JSON.parse(assetString);
             asset.TransactionHistory.push({
                 TransactionID: transactionID,
-                Timestamp: new Date((stamp.Seconds * 1000) + Math.round(stamp.Nanos/1000000)).toISOString(),
+                Timestamp: "",
                 From: asset.CurrentOwner.Entity,
                 To: newOwner.Entity,
                 Details: details

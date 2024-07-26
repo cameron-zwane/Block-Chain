@@ -283,12 +283,14 @@ class AssetTransfer extends Contract {
         status,
         transactionID
     ) {
+        const assetString = await this.ReadAsset(ctx, itemID);
+        const asset = JSON.parse(assetString);
         const newOwner = JSON.stringify({
             Entity: recipient,
             OwnerLocation: asset.Shipment.Destination,
             ReceivedDate: arrivalDate
         });
-        const asset = await this.TransferAsset(ctx, itemID, newOwner, transactionID, "Shipped and received", true);
+        asset = await this.TransferAsset(ctx, itemID, newOwner, transactionID, "Shipped and received", true);
         asset.Shipment.ArrivalDate = arrivalDate;
         asset.Shipment.Status =  status;
         return ctx.stub.putState(itemID, Buffer.from(JSON.stringify(asset)));

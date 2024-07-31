@@ -1,0 +1,125 @@
+=================CREATE CHANNEL==================
+./network.sh createChannel -c ws-supplier-channel
+
+==============DEPLOY CHANNEL CONFIG==============
+
+./network.sh deployCC \
+-c ws-supplier-channel \
+-ccn ws-supplier-chain \
+-ccp '../../../../Documents/LevelUps/Non-Relational-LevelUp/DL-app/chaincode/supplychain' \
+-ccl javascript
+
+================INITIALIZE LEDGER================
+
+peer chaincode invoke -o localhost:7050 \
+--ordererTLSHostnameOverride orderer.example.com \
+--tls --cafile "${PWD}/organizations/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem" \
+-C ws-supplier-channel \
+-n ws-supplier-chain \
+--peerAddresses localhost:7051 \
+--tlsRootCertFiles "${PWD}/organizations/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt" \
+--peerAddresses localhost:9051 \
+--tlsRootCertFiles "${PWD}/organizations/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/ca.crt" \
+-c '{"function":"InitLedger","Args":[]}'
+
+=================PROCESS ASSETS=================
+
+peer chaincode invoke -o localhost:7050 \
+--ordererTLSHostnameOverride orderer.example.com \
+--tls --cafile "${PWD}/organizations/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem" \
+-C ws-supplier-channel \
+-n ws-supplier-chain \
+--peerAddresses localhost:7051 \
+--tlsRootCertFiles "${PWD}/organizations/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt" \
+--peerAddresses localhost:9051 \
+--tlsRootCertFiles "${PWD}/organizations/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/ca.crt" \
+-c 
+'{"function":"ProcessAsset","Args":["00000001","Ethiopian Coffee Processing Ltd.","Addis Ababa, Ethiopia","2024-04-20","Wet Processing","TXN00001"]}' 
+'{"function":"ProcessAsset","Args":["00000002","Ethiopian Coffee Processing Ltd.","Addis Ababa, Ethiopia","2024-04-20","Wet Processing","TXN00002"]}'
+'{"function":"ProcessAsset","Args":["00000003","Ethiopian Coffee Processing Ltd.","Addis Ababa, Ethiopia","2024-04-21","Wet Processing","TXN00003"]}'
+'{"function":"ProcessAsset","Args":["00000004","Ethiopian Coffee Processing Ltd.","Addis Ababa, Ethiopia","2024-04-24","Wet Processing","TXN00004"]}'
+'{"function":"ProcessAsset","Args":["00000005","Ethiopian Coffee Processing Ltd.","Addis Ababa, Ethiopia","2024-04-24","Wet Processing","TXN00005"]}'
+
+
+'{"function":"PackageAsset","Args":["00000001","Global Coffee Packers Inc.","Nairobi, Kenya","2024-04-25","Eco-friendly Bags","TXN00006"]}'
+'{"function":"PackageAsset","Args":["00000002","Global Coffee Packers Inc.","Nairobi, Kenya","2024-04-25","Eco-friendly Bags","TXN00007"]}'
+'{"function":"PackageAsset","Args":["00000004","Global Coffee Packers Inc.","Nairobi, Kenya","2024-04-26","Plastic Bags","TXN00008"]}'
+'{"function":"PackageAsset","Args":["00000005","Global Coffee Packers Inc.","Nairobi, Kenya","2024-04-26","Plastic Bags","TXN00009"]}'
+
+'{"function":"ShipAsset","Args":["00000001","International Shippers Co.","SHIP000000301","New York, USA","2024-05-01","In Transit","TXN00010"]}'
+'{"function":"ShipAsset","Args":["00000002","International Shippers Co.","SHIP000000302","New York, USA","2024-05-02","In Transit","TXN00011"]}'
+'{"function":"ShipAsset","Args":["00000004","International Shippers Co.","SHIP000000303","New York, USA","2024-05-05","In Transit","TXN00012"]}'
+
+'{"function":"CompleteShipment","Args":["00000001","Coffee Distributors USA","2024-05-10","Shipped","TXN00013"]}'
+'{"function":"CompleteShipment","Args":["00000002","Coffee Distributors USA","2024-05-12","Shipped","TXN00014"]}'
+
+=================GET ALL ASSETS==================
+
+peer chaincode query -C ws-supplier-channel -n ws-supplier-chain -c '{"Args":["GetAllAssets"]}' | jq
+
+===============GET SPECIFIC ASSET================
+
+peer chaincode query -C ws-supplier-channel -n ws-supplier-chain -c '{"Args":["ReadAsset","00000001"]}' | jq
+
+=============GET TRANSACTION HISTORY=============
+
+peer chaincode query -C ws-supplier-channel -n ws-supplier-chain -c '{"Args":["GetAssetHistory","00000001"]}' | jq
+
+==============GET ASSETS BY OWNER===============
+
+peer chaincode query -C ws-supplier-channel -n ws-supplier-chain -c '{"Args":["GetAssetsByOwner","International Shippers Co."]}' | jq
+
+===============TRANSFER OWNERSHIP================
+peer chaincode invoke -o localhost:7050 \
+--ordererTLSHostnameOverride orderer.example.com \
+--tls --cafile "${PWD}/organizations/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem" \
+-C ws-supplier-channel \
+-n ws-supplier-chain \
+--peerAddresses localhost:7051 \
+--tlsRootCertFiles "${PWD}/organizations/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt" \
+--peerAddresses localhost:9051 \
+--tlsRootCertFiles "${PWD}/organizations/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/ca.crt" \
+-c '{"function":"TransferAsset","Args":["00000001","Ryan"]}'
+
+==================CREATE ASSET===================
+
+peer chaincode invoke -o localhost:7050 \
+--ordererTLSHostnameOverride orderer.example.com \
+--tls --cafile "${PWD}/organizations/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem" \
+-C ws-supplier-channel \
+-n ws-supplier-chain \
+--peerAddresses localhost:7051 \
+--tlsRootCertFiles "${PWD}/organizations/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt" \
+--peerAddresses localhost:9051 \
+--tlsRootCertFiles "${PWD}/organizations/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/ca.crt" \
+-c '{"function":"CreateAsset","Args":["00000010","Micelsoft Coffee Beans","{\"Farm\":\"Green Valley Farm\",\"OriginLocation\":\"Ethiopia\",\"Certifications\":[\"Organic\",\"Fair Trade\"],\"HarvestDate\": \"2024-04-15\"}","{\"Processor\":\"\",\"ProcessingLocation\":\"\",\"ProcessDate\":\"\",\"ProcessType\":\"\"}","{\"Packager\":\"\",\"PackagingLocation\":\"\",\"PackageDate\":\"\",\"PackageType\":\"\"}","{\"Shipper\":\"\",\"ShipmentID\":\"\",\"Origin\":\"\",\"Destination\":\"\",\"DepartureDate\":\"\",\"ArrivalDate\": \"\",\"Status\":\"\"}","{\"Entity\":\"Green Valley Farm\",\"OwnerLocation\":\"Ethiopia\",\"ReceivedDate\":\"2024-04-15\"}","[]"]}'
+
+==================DELETE ASSET===================
+
+peer chaincode invoke -o localhost:7050 \
+--ordererTLSHostnameOverride orderer.example.com \
+--tls --cafile "${PWD}/organizations/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem" \
+-C ws-supplier-channel \
+-n ws-supplier-chain \
+--peerAddresses localhost:7051 \
+--tlsRootCertFiles "${PWD}/organizations/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt" \
+--peerAddresses localhost:9051 \
+--tlsRootCertFiles "${PWD}/organizations/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/ca.crt" \
+-c '{"function":"DeleteAsset","Args":["00000001"]}'
+
+=================UPDATE ASSET===================
+
+peer chaincode invoke -o localhost:7050 \
+--ordererTLSHostnameOverride orderer.example.com \
+--tls --cafile "${PWD}/organizations/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem" \
+-C ws-supplier-channel \
+-n ws-supplier-chain \
+--peerAddresses localhost:7051 \
+--tlsRootCertFiles "${PWD}/organizations/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt" \
+--peerAddresses localhost:9051 \
+--tlsRootCertFiles "${PWD}/organizations/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/ca.crt" \
+-c '{"function":"UpdateAsset","Args":["00000006","Excelsa Coffee Beans","{\"Farm\":\"Green Valley Farm\",\"OriginLocation\":\"Ethiopia\",\"Certifications\":[\"Organic\",\"Fair Trade\"],\"HarvestDate\": \"2024-07-23\"}","{\"Processor\":\"QUIRKY PROCESSOR\",\"ProcessingLocation\":\"\",\"ProcessDate\":\"\",\"ProcessType\":\"\"}","{\"Packager\":\"\",\"PackagingLocation\":\"\",\"PackageDate\":\"\",\"PackageType\":\"\"}","{\"Shipper\":\"\",\"ShipmentID\":\"\",\"Origin\":\"\",\"Destination\":\"\",\"DepartureDate\":\"\",\"ArrivalDate\": \"\",\"Status\":\"\"}","{\"Entity\":\"Green Valley Farm\",\"OwnerLocation\":\"Ethiopia\",\"ReceivedDate\":\"2024-07-23\"}","[]"]}'
+
+=================================================
+
+
